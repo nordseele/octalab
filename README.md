@@ -24,7 +24,7 @@ about the firmware on the way.
 
 ---
 
-## 🚧 In development: grooves — with your own groove files
+## In active development: grooves — with your own groove files
 
 **The main piece of work right now** is a groove page after the **groove pool
 of Ableton Live**: a groove — the timing and the dynamics of a real
@@ -98,8 +98,7 @@ power-off (the printed feel stays with the project). The volume locks play
 but the stock display does not show them yet. The page and its settings are
 still changing with each test.
 
-## Tried and parked: a Grids-style generator
-
+## On hold : a Grids-style generator
 For a week octalab carried a trig generator inspired by Mutable Instruments'
 **Grids** ("topographic drum sequencer"): a map of rhythms explored with two
 encoders, a fill amount per track, the trigs printed as you turned. It ran on
