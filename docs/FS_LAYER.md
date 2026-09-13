@@ -46,6 +46,8 @@ Slots named so far:
 | `0x46c8241e` | file size | ems-octakit reads this slot as `SizeFunction` (`runtime/persistence.c`) ✅ |
 | `0x46c82442` `0x46c8244e` `0x46c8241a` `0x46c8243a` | the four the tree walker drives — see §2 | ✅ |
 
+A directory record (0x140 B, filled by `ot_fat_resolve_path` / `ot_fat_next_entry`): name at `+0x000`, FAT attribute at `+0x10d` (0x10 = directory), **first cluster = the long at `+0x11e`** ✅ — the walker `0x40090a14` hands `(long)rec[0x11e]` to the iterator slot `0x46c82442`. The word at `+0x120` is only its low half: enough on a small FAT16 card, wrong on a FAT32 card with 512-byte clusters for any folder past cluster 65535 (measured: a folder copied late to a 32 GB card was not listed).
+
 `0x46c82456` is **not** part of the table: it is the bank pointer (1224 refs;
 ems-octakit calls it `GK_STOCK_BANK_POINTER`).
 

@@ -3,91 +3,149 @@
 Creative helper functions for the **Elektron Octatrack**, added to the stock
 **OS 1.40C** — built and tested on an Octatrack MKI.
 
-octalab works with **randomisation as a source of inspiration** — the way the
-MIDI tools and generators of a DAW like Ableton Live hand you a variation, a
-fill or a sequence to react to: a starting point you would not have chosen,
-generated in one gesture, then yours to keep, edit or throw away. It adds **no
-new effects and no new synthesis**; other projects already cover that ground.
+octalab works with **feel and randomisation as sources of inspiration** — the
+way the groove pool, MIDI tools and generators of a DAW like Ableton Live hand
+you a feel or a variation to react to: a starting point you would not have
+chosen, applied in one gesture, then yours to keep, edit or throw away. It
+also adds **shortcuts to the stock workflow**. It adds **no new effects and no
+new synthesis**; other projects already cover that ground.
 
-This repository publishes no firmware, no build and no flashing procedure. It
-describes what octalab does, and shares what was learned about the firmware on
-the way.
+## No code here, for now
+
+This repository publishes no firmware, no build, no flashing procedure — and,
+for now, **no source code**. octalab changes too fast to be worth reading yet:
+new builds reach the unit almost every day, pages are redesigned after each
+test, and whole directions are tried and dropped (see *Tried and parked*
+below). The code will be published when the functions settle, as a module of
+octabam's remixer (below).
+
+What is here: what octalab does and where it is going, and what was learned
+about the firmware on the way.
 
 ---
 
-## 🚧 In development: a topographic trig generator
+## 🚧 In development: grooves — with your own groove files
 
-**The main piece of work right now** is a trig generation page for the
-Octatrack's sequencer, inspired by Mutable Instruments' **Grids**
-("topographic drum sequencer"):
+**The main piece of work right now** is a groove page after the **groove pool
+of Ableton Live**: a groove — the timing and the dynamics of a real
+performance — laid onto the trigs you already placed, so that a straight
+pattern takes the feel of a drummer.
 
-- **move through a map of rhythms with two encoders (X and Y)** — the
-  patterns morph smoothly from one rhythm into another as you turn;
-- **a fill amount per track**, from a sparse skeleton to a dense pattern, the
-  most important hits appearing first; a chaos amount for variations;
-- **every track of the pattern**, chosen with the track keys; each track
-  follows the kick, snare or hi-hat lane of the map at its own density;
-- **you see the trigs appear as you turn**, on the trig keys as in grid
-  recording and drawn on the screen, and **nothing is final until [ENTER]**
-  — [EXIT] puts the pattern back as it was.
+![The GROOVE page, as the Octatrack draws it](docs/img/groove_page.png)
 
-It is opened from the octalab menu for now. Design in progress; no date.
+*The GROOVE page, drawn by the Octatrack's own firmware (captured in an
+emulator): track 1 plays a groove extracted in Live, full timing, 35 % of its
+dynamics, the whole pattern's feel pushed to 120 %.*
+
+### Grooves are files, and you can add your own
+
+- **A folder `GROOVES` at the root of the CF card** holds the grooves, one
+  small file each (`.otg`, a few hundred bytes). The page lists whatever is
+  there, sorted by name: **add a file, and it is in the list** the next time
+  you open the page.
+- **They are made from Ableton Live groove files (`.agr`)** — any groove your
+  Live has in its Groove Pool, including the ones you extract yourself from
+  your own loops and recordings with *Extract Groove*. A small converter on
+  the computer turns a folder of `.agr` files into `.otg` files, ready to copy
+  to the card. It reads what Live writes (compressed or not), keeps up to
+  **four bars (64 steps)**, and brings along the amounts Live suggests.
+- **It recognises how the groove is played**: straight 16ths, swung 8ths, or a
+  triplet (shuffle) feel — a shuffle groove pulls straight 16th trigs onto the
+  triplet. Loose, "late" grooves keep their looseness: when a groove has two
+  hits in one 16th, the one nearest the grid is kept.
+- **No groove data comes with octalab.** Your grooves stay yours; the
+  converter will be published with the rest of octalab. MIDI files (a
+  drummer's loop) are the next source planned.
+- **Nothing depends on the file afterwards.** A printed groove is ordinary
+  trig data: remove a file from the card, and your projects do not notice.
+
+### What it does to the pattern
+
+It uses the Octatrack's own sequencer — no new engine:
+
+- **timing → micro timing**: each trig is moved as the groove plays that step,
+  in the sequencer's own steps of 1/384 of a bar, up to almost a full step
+  early or late;
+- **dynamics → volume p-locks** (AMP VOL) on the trigs; a volume lock you had
+  set by hand is scaled, not replaced;
+- once kept, **they are ordinary trigs and locks**: edit them by hand, tighten
+  them with the stock quantize of TRACK TRIG EDIT, save them with the project.
+  The track's own swing setting is not touched.
+
+### The page
+
+In grid recording, **[DOWN]** walks from the grid to a new layer of pages under
+it, the **GRID PAGES** — GROOVE is the first — and **[UP]** walks back.
+
+- **Each track has its own groove** — OFF until you choose one, so a track you
+  do not touch stays exactly as it was — and its own amounts, after Live's:
+  **TIMING** (how far the trigs move toward the groove), **VELOCITY** (how
+  much of its dynamics), **QUANTIZE** (how much of your own played timing is
+  removed first), **BAR** (which bar of a longer groove your pattern starts
+  on, shown as `2/4`).
+- **One AMOUNT for the whole pattern** (Live's *Global Amount*), up to 200 %,
+  pushes or calms the feel of every grooved track at once.
+- **You hear it as you turn**: every value is written at once, on the track
+  you see, AMOUNT on all of them. Changes always start from the trigs as they
+  were before the groove, so you can come back later and dial a feel down.
+- **[ENTER] keeps it, [EXIT] puts the pattern back** as it was when the page
+  opened. You can keep placing trigs while the page is open; they take the
+  groove at once.
+
+**State:** on the unit (MKI) since 13 Sep 2026, and working. First version:
+audio tracks, pattern scale 1X; the per-track settings are kept until
+power-off (the printed feel stays with the project). The volume locks play
+but the stock display does not show them yet. The page and its settings are
+still changing with each test.
+
+## Tried and parked: a Grids-style generator
+
+For a week octalab carried a trig generator inspired by Mutable Instruments'
+**Grids** ("topographic drum sequencer"): a map of rhythms explored with two
+encoders, a fill amount per track, the trigs printed as you turned. It ran on
+the unit — and in use it brought little to making music on the Octatrack. It
+is put aside; the code stays in the workshop in case someone has the idea
+that makes it worth it. **Generation itself goes on** (see *Where it is
+going*): what was parked is this one generator, not the idea.
+
+![The GRIDS page: as built, and a rough corrected mock-up](docs/img/grids_before_after.png)
+
+*Left: the last GRIDS page as the unit drew it. Right: a rough mock-up of what
+it would have become (not polished — the concept was parked first).*
 
 ## Part of octabam's remixer
 
 octalab is built as a **module of [octabam](https://github.com/sambanks/octabam)'s
 remixer**, the project that composes the community's Octatrack modifications
-into one image built from the user's own 1.40C. The work to get there is done:
-octalab is a ColdFire DRAM module — its code lives in octabam's memory reserve,
-loaded at boot by octabam's loader — and it touches the OS in only a handful of
-places, each declared to the remixer so that it can refuse a collision with
-another module. It runs on an Octatrack MKI through octabam's loader (first
-flash 11 Sep 2026, in daily use since), and it builds and boots beside
+into one image built from the user's own 1.40C. octalab is a ColdFire DRAM
+module — its code lives in octabam's memory reserve, loaded at boot by
+octabam's loader — and it touches the OS in only a handful of places, each
+declared to the remixer so that it can refuse a collision with another
+module. It runs on an Octatrack MKI through octabam's loader (first flash
+11 Sep 2026, in daily use since), and it builds and boots beside
 ems-octakit's Kits under octabam's emulator.
 
-**The functions are not available to the public yet.** The module is not
-published while the main development is under way — the functions and the way
-they are played are still changing from one build to the next. It will be
-offered through octabam's remixer when it settles.
+**The functions are not available to the public yet.** They will be offered
+through octabam's remixer when they settle.
 
 ## The octalab menu: double-tap [FUNCTION]
 
-Everything octalab adds is in one list. **Tap [FUNCTION] twice, quickly**, from
-almost any screen, and the list opens over whatever you were doing. It has one
-row per subject — the sample pool, the LFOs, the effects, the scenes, the
-trigs, the track — and each row shows one action:
+Everything octalab adds as a one-gesture function is in one list. **Tap
+[FUNCTION] twice, quickly**, from almost any screen, and the list opens over
+whatever you were doing.
+
+![The octalab menu](docs/img/octalab_menu.png)
+
+It has one row per subject — the sample pool, the LFOs, the effects, the
+scenes, the trigs, the track — and each row shows one action:
 
 - **LEVEL** (or the up/down arrows) moves between rows;
-- **[LEFT] / [RIGHT]** choose the row's action — `<` and `>` show where they
-  lead, and they stop at the ends rather than wrapping around;
+- **[LEFT] / [RIGHT]** choose the row's action (`>` shows there is more);
 - **[ENTER]**, or **pressing LEVEL**, runs it; **[EXIT]** closes the list.
 
-- **An action that erases asks first** (YES/NO), always sits last on its row,
-  and the row goes back to its first action afterwards.
-- **[FUNCTION] still works as before.** A single press, or [FUNCTION] held with
-  another key, does what it always did. The menu opens only on two presses in a
-  row with no other key in between.
-- **The list remembers the last row, and each row its last action.** A
-  function you repeat is double-tap, then [ENTER].
-- **Nothing underneath moves** while the list is open, and everything is back
-  to normal once it closes.
-
-The list holds the **one-gesture functions** — the ones that need no setting.
-Functions that are played with an amount (how dense, how far from the current
-value) will get a page of their own, where the result shows as you turn the
-knob (see the roadmap).
-
-Some functions have options. They are in **OCTALAB**, a fifth category of the
-MAIN MENU (`[FUNCTION] + [MIXER]`), beside PROJECT, SYSTEM, CONTROL and MIDI:
-a page of checkboxes. The options go back to their defaults at every power-on.
-
-## UI workflow improvements
-
-Shortcuts that make the stock workflow shorter, without a menu.
-
-| function | shortcut | what it does | |
-|---|---|---|---|
-| **Quick access to the sample edit window on MK1** | **[TRIG] + [BANK]** (grid recording) | opens the **audio editor on the sample locked on that trig** — or, if the trig has no sample lock, on the sample the track's machine plays (STATIC and FLEX). In the stock OS [BANK] ignores the held trig and opens the bank selection; here it goes straight to the sample you are working on, and the trig stays as it was when you let go. [BANK] alone, or outside grid recording, works as before | ✅ |
+An action that erases asks first (YES/NO). [FUNCTION] alone, or held with
+another key, still does what it always did. Some functions have options, in
+**OCTALAB**, a fifth category of the MAIN MENU (`[FUNCTION] + [MIXER]`).
 
 ## Functions
 
@@ -104,46 +162,45 @@ Shortcuts that make the stock workflow shorter, without a menu.
 | **FX** | | |
 | `RANDOM FX` | chooses random effects for the current track | ✅ |
 | **scenes** | | |
-| `GENERATE SCENES` | fills scenes 2 to 16 with random locks, the OCTALAB options choosing which pages; **scene 1 stays blank**, so a clean scene is always there. The new scenes play at once | ✅ |
+| `GENERATE SCENES` | fills scenes 2 to 16 with random locks, the OCTALAB options choosing which pages; **scene 1 stays blank**, so a clean scene is always there | ✅ |
 | `CLEAR SCENES` | empties all sixteen scenes, after a YES/NO | ✅ |
 | **trigs** | | |
-| `RANDOM P-LOCKS` | gives every normal (red) trig of the current track a random parameter lock for each parameter ticked in the OCTALAB options (`PL …`), always inside that parameter's own range. The locks are ordinary ones | ✅ |
+| `RANDOM P-LOCKS` | gives every normal (red) trig of the current track a random parameter lock for each parameter ticked in the options, inside its own range | ✅ |
 | `RANDOM SMP LOCKS` | gives every normal (red) trig of the current track a sample lock to a random sample from the pool | ✅ |
-| `CLEAR P-LOCKS` | removes every parameter lock of the current track in the current pattern; trigs and sample locks stay. There is no stock operation for it | ✅ |
+| `CLEAR P-LOCKS` | removes every parameter lock of the current track in the current pattern; trigs and sample locks stay | ✅ |
 | `CLEAR SMP LOCKS` | removes every sample lock of the current track in the current pattern | ✅ |
 | **track** | | |
-| `INIT TRACK` | puts the current track back the way a new project starts it: every parameter page, FX1 on FILTER and FX2 on DELAY, its sample slot, its scene locks. The trigs stay — a clean sound under the same sequence | ✅ |
+| `INIT TRACK` | puts the current track back the way a new project starts it, trigs kept — a clean sound under the same sequence | ✅ |
 
-The trig functions start deliberately simple — every trig, the whole range —
-so that what stays musical can be heard on the unit before it is refined.
+## UI workflow improvements
 
-Options page:
-- `SC PITCH`, `SC START`, `SC LENGTH`, `SC RATE`, `SC RETRIG`, `SC LFO`,
-  `SC LFO DEST`, `SC AMP`, `SC FX` — what `GENERATE SCENES` may touch (LFO,
-  LFO DEST and FX on by default);
-- `FILL OVERWR` — lets the pool fill replace samples that are already loaded;
-- `PL PITCH`, `PL START`, `PL LENGTH`, `PL RATE`, `PL RETRIG`, `PL LFO`,
-  `PL AMP`, `PL FX1`, `PL FX2` — which parameters `RANDOM P-LOCKS` locks
-  (FX1 and FX2 on by default).
+| function | shortcut | what it does | |
+|---|---|---|---|
+| **Quick access to the sample edit window on MK1** | **[TRIG] + [BANK]** (grid recording) | opens the **audio editor on the sample locked on that trig** — or on the sample the track's machine plays (STATIC and FLEX); the trig stays as it was. [BANK] alone works as before | ✅ |
+| **GRID PAGES** | **[DOWN] / [UP]** (grid recording, no trig held) | pages under the grid for entering and shaping trigs; GROOVE is the first | 🚧 |
 
-## Roadmap
+## Where it is going
 
-- **More workflow shortcuts** in the spirit of [TRIG] + [BANK].
-- **The topographic trig generator** (see *In development* above), then more
-  generators on the same page — euclidean rhythms, trigless locks spread over
-  a share of the steps (a first version ran on the unit from the popup).
+- **Grooves**: the volume locks shown on the trigs like any lock; every
+  pattern scale, not only 1X; the settings kept with the project instead of
+  until power-off; MIDI files as a source; Live's RANDOM, as far as the
+  sequencer allows; then trig probability and trig count in the same spirit —
+  native features, given an interface that makes them playable.
+- **Generation, still**: work on generating trigs goes on beside the grooves
+  — euclidean rhythms, densities, trigless locks spread over a share of the
+  steps (a first version ran on the unit), each on a page where the result
+  shows as you turn.
+- **More pages on GRID PAGES** for entering and shaping trigs.
 - **Controlled randomness** — variations around the current values rather
-  than a fresh draw; ranges and density.
-- **More one-gesture functions** for the LFO and effect rows.
-- **Undo** for octalab's functions, randomised scenes included.
+  than a fresh draw.
+- **More workflow shortcuts** in the spirit of [TRIG] + [BANK].
+- **Undo** for octalab's functions.
 
 ## State of the project
 
 - **Machines:** built and tested on an Octatrack MKI running OS 1.40C. The
-  MKII runs the same OS 1.40C image, so octalab should work there as well —
-  not tested yet. No other OS version.
-- **Working today:** everything in the functions table, on the unit, through
-  octabam's loader.
+  MKII runs the same OS image, so octalab should work there as well — not
+  tested yet. No other OS version.
 - **No build is distributed**, now or later: an image contains Elektron's OS.
   When the module is published, it will be built by each user from their own
   stock OS through octabam's remixer.
@@ -163,9 +220,11 @@ publishes only what they still mark open.
 
 ---
 
-**MIT licensed.** These findings came from reading other people's work; nothing
-here is fenced off.
+**MIT licensed** (this repository's text and images). These findings came from
+reading other people's work; nothing here is fenced off.
 
 *Independent, unofficial, educational. Not endorsed by, supported by, or
 affiliated with Elektron. "Elektron" and "Octatrack" are trademarks of Elektron
-Music Machines MAV AB, used here only to identify the hardware under study.*
+Music Machines MAV AB, used here only to identify the hardware under study.
+"Ableton" and "Live" are trademarks of Ableton AG; "Grids" is a module by
+Mutable Instruments.*
