@@ -29,23 +29,25 @@ the firmware on the way.
 
 ## Exploring now: grooves — with your own groove files
 
-**What octalab explores right now** is a groove page after the **groove pool
-of Ableton Live**: a groove — the timing and the dynamics of a real
+**What octalab explores right now** is a groove workflow after the **groove
+pool of Ableton Live**: a groove — the timing and the dynamics of a real
 performance — laid onto the trigs you already placed, so that a straight
-pattern takes the feel of a drummer.
+pattern takes the feel of a drummer. Each bank has a **groove pool of eight
+slots**, like the Octatrack's own sample slots, and each track takes its
+feel from one of them.
 
-![The GROOVE page, as the Octatrack draws it](docs/img/groove_page.png)
+![The groove pool of a bank, as the Octatrack draws it](docs/img/groove_pool.png)
 
-*The GROOVE page, drawn by the Octatrack's own firmware (captured in an
-emulator): track 1 plays a groove extracted in Live, full timing, 35 % of its
-dynamics, the whole pattern's feel pushed to 120 %.*
+*The groove pool of bank A, drawn by the Octatrack's own firmware (captured
+in an emulator): slot 1 plays a groove extracted in Live and drives tracks 1
+and 3, slot 2 drives track 2; the bank's feel is pushed to 120 %.*
 
 ### Grooves are files, and you can add your own
 
 - **A folder `GROOVES` at the root of the CF card** holds the grooves, one
-  small file each (`.otg`, a few hundred bytes). The page lists whatever is
+  small file each (`.otg`, a few hundred bytes). The pages list whatever is
   there, sorted by name: **add a file, and it is in the list** the next time
-  you open the page.
+  you open them.
 - **They are made from Ableton Live groove files (`.agr`)** — any groove your
   Live has in its Groove Pool, including the ones you extract yourself from
   your own loops and recordings with *Extract Groove*. A small converter on
@@ -75,31 +77,88 @@ It uses the Octatrack's own sequencer — no new engine:
   them with the stock quantize of TRACK TRIG EDIT, save them with the project.
   The track's own swing setting is not touched.
 
-### The page
+### The groove pool: eight slots per bank
+
+- **[BANK] + [ENTER]** opens the pool of the current bank from almost
+  anywhere ([BANK] held or tapped — [ENTER] did nothing on the bank prompt);
+  **[BANK]** opens it from a track's GROOVE page.
+- **LEVEL chooses a slot's groove file.** Beside each slot, the tracks of the
+  pattern that use it (`1-3-----`). On the selected slot a long name
+  scrolls, as in the stock sample slot list.
+- **Change a slot, and every track on it follows at once** — in every pattern
+  of the bank. One slot can drive the kick, the snare and the hats together:
+  change the groove once, the whole kit moves.
+- **[ENTER] opens a slot's settings**, after Live's: **TIMING** (how far the
+  trigs move toward the groove), **VELOCITY** (how much of its dynamics),
+  **QUANTIZE** (how much of your own played timing is removed first), and
+  which tracks use it. An empty slot shows `-`.
+- **GLOBAL AMOUNT** (Live's *Global Amount*), at the top of the pool and on
+  **encoder A**: pushes or calms the feel of every grooved track of the bank,
+  up to 200 %.
+- **Immediate, like the sample slots**: every change is printed as you turn.
+
+![A slot's settings, over the pool](docs/img/groove_slot.png)
+
+### The track's GROOVE page
 
 In grid recording, **[DOWN]** walks from the grid to a new layer of pages under
 it, the **GRID PAGES** — GROOVE is the first — and **[UP]** walks back.
 
-- **Each track has its own groove** — OFF until you choose one, so a track you
-  do not touch stays exactly as it was — and its own amounts, after Live's:
-  **TIMING** (how far the trigs move toward the groove), **VELOCITY** (how
-  much of its dynamics), **QUANTIZE** (how much of your own played timing is
-  removed first), **BAR** (which bar of a longer groove your pattern starts
-  on, shown as `2/4`).
-- **One AMOUNT for the whole pattern** (Live's *Global Amount*), up to 200 %,
-  pushes or calms the feel of every grooved track at once.
-- **You hear it as you turn**: every value is written at once, on the track
-  you see, AMOUNT on all of them. Changes always start from the trigs as they
-  were before the groove, so you can come back later and dial a feel down.
-- **[ENTER] keeps it, [EXIT] puts the pattern back** as it was when the page
-  opened. You can keep placing trigs while the page is open; they take the
-  groove at once.
+![A track's GROOVE page](docs/img/groove_page.png)
 
-**State:** on the unit (MKI) since 13 Sep 2026, and working. First version:
-audio tracks, pattern scale 1X; the per-track settings are kept until
-power-off (the printed feel stays with the project). The volume locks show
-like any lock: on the trigs, and on the AMP page with a trig held. The page
-and its settings are still changing with each test.
+- **SLOT**: OFF until you choose one — a track you do not touch stays exactly
+  as it was — or one of the bank's eight slots.
+- **TIMING** and **VELOCITY**: this track's **share** of the slot's amounts
+  (100 % = all of it) — the hats can take half the dynamics the snare takes
+  from the same groove. **BAR**: which bar of a longer groove the pattern
+  starts on (`2/4`). **GLOBAL AMOUNT** on encoder A, from any row.
+- **You hear it as you turn**, and you can keep placing trigs while the page
+  is open: they take the groove at once. Changes always start from the trigs
+  as they were before the groove, so a feel can be dialled down or taken off
+  later (SLOT back to OFF).
+- **[ENTER] keeps it. [EXIT] puts the pattern back** as the page found it —
+  after a change it asks first (YES/NO), so an [EXIT] pressed by reflex does
+  not lose the groove. **[REC]** leaves the page (the same rule) and grid
+  recording in one press. Held arrows scroll the rows.
+
+**State:** on the unit (MKI) since 13 Sep 2026; the groove pool since 14 Sep,
+working. First version: audio tracks, pattern scale 1X; the pools and the
+tracks' settings are kept until power-off — the printed feel stays with the
+project (see *Coming next* and *Open questions*).
+
+### Coming next: the groove map
+
+Today the pools and the tracks' settings live in memory until power-off. The
+**groove map** will keep them with the project: a small file of octalab's own
+in the project's folder, holding each bank's pool, every track's slot and
+shares, and the trigs as they were before their groove — so a groove can
+still be dialled down or taken off after a power cycle. The Octatrack's own
+project files are not touched: a project stays readable by a stock OS.
+
+- **Read back** the first time a groove page opens after a boot or a project
+  change (the printed feel is already in the patterns; the map is only needed
+  to edit).
+- **Written by the Octatrack's own storage task**, as the stock writes its
+  banks: a moment after the sequencer stops, and at every sync — nothing to
+  save by hand.
+
+Then **pool presets**: eight grooves and their settings saved under a name
+and loaded into any bank, from **[LEFT]** on the pool page.
+
+### Open questions
+
+- **The last change before a power-off.** With the groove map, a change
+  reaches the card when the sequencer has stopped for a moment, or at a sync;
+  switching off right after a change, playing, would lose that change's
+  settings (never the printed trigs). The stock banks behave alike: the
+  current bank reaches the card at SYNC / SAVE / project change.
+- **Copying a project.** What the Octatrack does with a file of ours in a
+  project folder on SAVE AS or a project copy is still to check: the map may
+  stay behind.
+- **Pattern scale.** Only 1X for now. At 3/4 a groove printed at 1X is still
+  felt: the micro timing seems to follow the step — to confirm before other
+  scales are allowed.
+- **MKII**: the same OS image; untested.
 
 ## On hold: a Grids-style generator
 For a week octalab carried a trig generator inspired by Mutable Instruments'
@@ -181,17 +240,18 @@ another key, still does what it always did. Some functions have options, in
 |---|---|---|---|
 | **Quick access to the sample edit window on MK1** | **[TRIG] + [BANK]** (grid recording) | opens the **audio editor on the sample locked on that trig** — or on the sample the track's machine plays (STATIC and FLEX); the trig stays as it was. [BANK] alone works as before | ✅ |
 | **GRID PAGES** | **[DOWN] / [UP]** (grid recording, no trig held) | pages under the grid for entering and shaping trigs; GROOVE is the first | 🚧 |
+| **Groove pool** | **[BANK] + [ENTER]** (anywhere), **[BANK]** (on a GROOVE page) | the current bank's eight groove slots; the bank prompt's [ENTER] did nothing | 🚧 |
 
 ## What it may explore next
 
 Directions, not a roadmap — each one is tried on the unit and kept only if it
 earns its place.
 
-- **Grooves**: a page workflow that is harder to lose by reflex; every
-  pattern scale, not only 1X; the settings kept with the project instead of
-  until power-off; MIDI files as a source; Live's RANDOM, as far as the
-  sequencer allows; then trig probability and trig count in the same spirit —
-  native features, given an interface that makes them playable.
+- **Grooves**: the groove map (the pools and settings kept with the
+  project) and pool presets first; then every pattern scale, not only 1X;
+  MIDI files as a source; Live's RANDOM, as far as the sequencer allows; then
+  trig probability and trig count in the same spirit — native features,
+  given an interface that makes them playable.
 - **Generation, still**: work on generating trigs goes on beside the grooves
   — euclidean rhythms, densities, trigless locks spread over a share of the
   steps (a first version ran on the unit), each on a page where the result
