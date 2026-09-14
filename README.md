@@ -10,23 +10,26 @@ chosen, applied in one gesture, then yours to keep, edit or throw away. It
 also adds **shortcuts to the stock workflow**. It adds **no new effects and no
 new synthesis**; other projects already cover that ground.
 
-## No code here, for now
+## An exploration, not a product
+
+octalab is a **workshop exploring what can be added to the Octatrack's own
+firmware** — what the sequencer and the pages will accept, and what is worth
+having once it runs on the unit. It is not a finished set of features on its
+way to a release: new builds reach the unit almost every day, pages are
+redesigned after each test, and whole directions are tried and put aside (see
+*On hold* below). Some functions may settle and be shared as a module of
+octabam's remixer (below); others will stay experiments.
 
 This repository publishes no firmware, no build, no flashing procedure — and,
-for now, **no source code**. octalab changes too fast to be worth reading yet:
-new builds reach the unit almost every day, pages are redesigned after each
-test, and whole directions are tried and dropped (see *Tried and parked*
-below). The code will be published when the functions settle, as a module of
-octabam's remixer (below).
-
-What is here: what octalab does and where it is going, and what was learned
-about the firmware on the way.
+for now, **no source code**: it moves too fast to be worth reading yet. What is
+here: what octalab explores, what came out of it, and what was learned about
+the firmware on the way.
 
 ---
 
-## In active development: grooves — with your own groove files
+## Exploring now: grooves — with your own groove files
 
-**The main piece of work right now** is a groove page after the **groove pool
+**What octalab explores right now** is a groove page after the **groove pool
 of Ableton Live**: a groove — the timing and the dynamics of a real
 performance — laid onto the trigs you already placed, so that a straight
 pattern takes the feel of a drummer.
@@ -94,18 +97,18 @@ it, the **GRID PAGES** — GROOVE is the first — and **[UP]** walks back.
 
 **State:** on the unit (MKI) since 13 Sep 2026, and working. First version:
 audio tracks, pattern scale 1X; the per-track settings are kept until
-power-off (the printed feel stays with the project). The volume locks play
-but the stock display does not show them yet. The page and its settings are
-still changing with each test.
+power-off (the printed feel stays with the project). The volume locks show
+like any lock: on the trigs, and on the AMP page with a trig held. The page
+and its settings are still changing with each test.
 
-## On hold : a Grids-style generator
+## On hold: a Grids-style generator
 For a week octalab carried a trig generator inspired by Mutable Instruments'
 **Grids** ("topographic drum sequencer"): a map of rhythms explored with two
 encoders, a fill amount per track, the trigs printed as you turned. It ran on
 the unit — and in use it brought little to making music on the Octatrack. It
 is put aside; the code stays in the workshop in case someone has the idea
-that makes it worth it. **Generation itself goes on** (see *Where it is
-going*): what was parked is this one generator, not the idea.
+that makes it worth it. **Generation itself goes on** (see *What it may
+explore next*): what was parked is this one generator, not the idea.
 
 ![The GRIDS page: as built, and a rough corrected mock-up](docs/img/grids_before_after.png)
 
@@ -124,8 +127,9 @@ module. It runs on an Octatrack MKI through octabam's loader (first flash
 11 Sep 2026, in daily use since), and it builds and boots beside
 ems-octakit's Kits under octabam's emulator.
 
-**The functions are not available to the public yet.** They will be offered
-through octabam's remixer when they settle.
+**The functions are not available to the public.** Those that settle may be
+offered through octabam's remixer one day; nothing here is a promise of a
+release.
 
 ## The octalab menu: double-tap [FUNCTION]
 
@@ -178,9 +182,12 @@ another key, still does what it always did. Some functions have options, in
 | **Quick access to the sample edit window on MK1** | **[TRIG] + [BANK]** (grid recording) | opens the **audio editor on the sample locked on that trig** — or on the sample the track's machine plays (STATIC and FLEX); the trig stays as it was. [BANK] alone works as before | ✅ |
 | **GRID PAGES** | **[DOWN] / [UP]** (grid recording, no trig held) | pages under the grid for entering and shaping trigs; GROOVE is the first | 🚧 |
 
-## Where it is going
+## What it may explore next
 
-- **Grooves**: the volume locks shown on the trigs like any lock; every
+Directions, not a roadmap — each one is tried on the unit and kept only if it
+earns its place.
+
+- **Grooves**: a page workflow that is harder to lose by reflex; every
   pattern scale, not only 1X; the settings kept with the project instead of
   until power-off; MIDI files as a source; Live's RANDOM, as far as the
   sequencer allows; then trig probability and trig count in the same spirit —
@@ -201,7 +208,7 @@ another key, still does what it always did. Some functions have options, in
   MKII runs the same OS image, so octalab should work there as well — not
   tested yet. No other OS version.
 - **No build is distributed**, now or later: an image contains Elektron's OS.
-  When the module is published, it will be built by each user from their own
+  If the module is ever published, it will be built by each user from their own
   stock OS through octabam's remixer.
 
 ## For other firmware projects
