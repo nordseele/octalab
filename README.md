@@ -209,20 +209,18 @@ whole rotated −1; only track 2 has a generator (`-E------`).*
 **State:** on the unit (MKI) since 15 Sep 2026, working — five builds that day,
 each after a test on the unit. Audio tracks.
 
-## On hold: a Grids-style generator
+## Previous experiments: a Grids-style generator
 For a week octalab carried a trig generator inspired by Mutable Instruments'
 **Grids** ("topographic drum sequencer"): a map of rhythms explored with two
 encoders, a fill amount per track, the trigs printed as you turned. It ran on
 the unit — and in use it brought little to making music on the Octatrack. It
 is put aside; the code stays in the workshop in case someone has the idea
 that makes it worth it. **Generation itself went on**: the GENERATOR page
-(above) is laid out to take other modes — Grids among them, should it come
-back.
+(above) is laid out to take other modes — Grids among them, will come back soon.
 
 ![The GRIDS page: as built, and a rough corrected mock-up](docs/img/grids_before_after.png)
 
-*Left: the last GRIDS page as the unit drew it. Right: a rough mock-up of what
-it would have become (not polished — the concept was parked first).*
+*Left: the last GRIDS page as the unit drew it. Right: a very rough mock-up of the UI*
 
 ## Part of octabam's remixer
 
