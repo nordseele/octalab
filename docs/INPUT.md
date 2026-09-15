@@ -249,3 +249,40 @@ with a trig key physically down (`FUN_4003171c`), it opens the editor on that
 step's sample lock (record byte 31), or on the machine's sample as
 [TRACK]+[BANK] picks it, then does `FUN_4004f5f8`'s bookkeeping and leaves
 `0x460e73c2` at 0; otherwise the two displaced instructions and `0x4007af88`.
+
+## 10. Pages over GRID RECORDING: a held trig, the current track's key, the SETUP window's calls ✅ code, emulator, unit (15 Sep 2026)
+
+- **A trig held under a page of one's own.** Holding a trig in grid
+  recording registers the stock's trig-held input map over any other (LEVEL
+  → `0x400434d8`). LEVEL then opens the stock's sample-lock list (LOCK
+  STATIC; LEVEL → `0x40024bb4`) and the popup engine frees the popup under
+  it — its cell zeroed — **without calling that popup's closed callback**.
+  A map that popup left registered then receives the trig's release; a map
+  that swallows it leaves the held mask `0x460d174a` set: the firmware keeps
+  the trig held for good ([REC] offers TRIG COPY, grid recording cannot be
+  left, the sequencer will not stop). A page whose popup cell reads 0 must
+  hand trig events — press and release share one handler, `0x40060ce0(code,
+  down)` — to the stock and unregister its map.
+- **The current track's key pressed again** in grid recording opens the
+  stock's slot list over whatever popup is up, which closes it. A page that
+  forwards the track keys has to swallow the current track's own key.
+- **The SETUP windows' calls** (EFFECT 1 SETUP: opener `FUN_40059afc`,
+  descriptor `0x400bc25a`, draw `FUN_4003792c`), callable for a page of one's
+  own — the surface's y runs up from the bottom row:
+  `0x4005829c(115, 64, 0, 0, 1, closed)` the window;
+  `0x400125ac(surface, 0, 1)` its planes cleared as the SETUP windows do;
+  `0x400570b8(object, title, "")` the frame and title band;
+  `0x40011b94(surface, x, y0, y1, 1)` a solid vertical line;
+  `0x40011a58(surface, x0, y, x1)` a dotted horizontal line (one pixel in
+  two); `0x40012004(surface, x0, y0, x1, y1, 1)` a line drawn pixel by pixel
+  with the ink toggling — the grid's dotted verticals;
+  `0x40013904(font, surface, x, y, align, invert, width, fmt, ...)`
+  formatted text, align 1 centred / 2 right, its box cleared first (`width`
+  a template string sizing the box, the stock's `"XXXX"` at `0x400b451d`).
+  The 3 × 2 grid: a solid line at x `0x34`, dotted verticals at `0x48` and
+  `0x5c`, a dotted horizontal at y `0x1c`, cells 20 px wide, labels centred
+  at x `col*0x14 + 0x3e`, y `0x30 − row*0x1b`.
+- **Fonts**: eight records of 0x14 bytes at `0x400ba812 … 0x400ba89e`
+  (`width, height, three glyph pointers`); `0x400ba876` is the small UI font
+  (506 references), `0x400ba83a` a large one (13/8). A text's width:
+  `0x40012f30(font, -1, text)`.

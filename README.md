@@ -27,9 +27,9 @@ the firmware on the way.
 
 ---
 
-## Exploring now: grooves — with your own groove files
+## Grooves — with your own groove files
 
-**What octalab explores right now** is a groove workflow after the **groove
+The first direction octalab explores is a groove workflow after the **groove
 pool of Ableton Live**: a groove — the timing and the dynamics of a real
 performance — laid onto the trigs you already placed, so that a straight
 pattern takes the feel of a drummer. Each bank has a **groove pool of eight
@@ -101,8 +101,8 @@ It uses the Octatrack's own sequencer — no new engine:
 
 ### The track's GROOVE page
 
-In grid recording, **[DOWN]** walks from the grid to a new layer of pages under
-it, the **GRID PAGES** — GROOVE is the first — and **[UP]** walks back.
+In grid recording, **[DOWN]** walks from the grid to the **GRID PAGES**: GROOVE
+under the grid, and **[UP]** to GENERATOR above it (see *Generating trigs*).
 
 ![A track's GROOVE page](docs/img/groove_page.png)
 
@@ -116,24 +116,26 @@ it, the **GRID PAGES** — GROOVE is the first — and **[UP]** walks back.
   is open: they take the groove at once. Changes always start from the trigs
   as they were before the groove, so a feel can be dialled down or taken off
   later (SLOT back to OFF).
-- **[ENTER] keeps it. [EXIT] puts the pattern back** as the page found it —
-  after a change it asks first (YES/NO), so an [EXIT] pressed by reflex does
-  not lose the groove. **[REC]** leaves the page (the same rule) and grid
-  recording in one press. Held arrows scroll the rows.
+- **[ENTER] on the SLOT row opens the bank's pool on the track's slot** — to
+  give an empty slot its groove file at once. Elsewhere [ENTER], like
+  **[EXIT]** and **[UP]** on the first row, closes the page and keeps
+  everything: there is nothing to confirm, a groove always starts from the
+  trigs as they were, and SLOT back to OFF gives the track back exactly.
+  **[REC]** leaves the page and grid recording in one press. Held arrows
+  scroll the rows.
 
-**State:** on the unit (MKI) since 13 Sep 2026; the groove pool since 14 Sep,
-working. First version: audio tracks, pattern scale 1X; the pools and the
-tracks' settings are kept until power-off — the printed feel stays with the
-project (see *Coming next* and *Open questions*).
+**State:** on the unit (MKI) since 13 Sep 2026; the groove pool since 14 Sep;
+the groove map and the groove following new trigs since 15 Sep — working.
+First version: audio tracks, pattern scale 1X.
 
-### Coming next: the groove map
+### The groove map: kept with the project
 
-Today the pools and the tracks' settings live in memory until power-off. The
-**groove map** will keep them with the project: a small file of octalab's own
-in the project's folder, holding each bank's pool, every track's slot and
-shares, and the trigs as they were before their groove — so a groove can
-still be dialled down or taken off after a power cycle. The Octatrack's own
-project files are not touched: a project stays readable by a stock OS.
+The pools and the tracks' settings are kept with the project, in a small file
+of octalab's own in the project's folder (`octalab_grooves.map`): each bank's
+pool, every track's slot and shares, and the trigs as they were before their
+groove — so a groove can still be dialled down or taken off after a power
+cycle. The Octatrack's own project files are not touched: a project stays
+readable by a stock OS.
 
 - **Read back** the first time a groove page opens after a boot or a project
   change (the printed feel is already in the patterns; the map is only needed
@@ -141,8 +143,11 @@ project files are not touched: a project stays readable by a stock OS.
 - **Written by the Octatrack's own storage task**, as the stock writes its
   banks: a moment after the sequencer stops, and at every sync — nothing to
   save by hand.
+- **A trig that appears on a grooved track** — placed by hand, recorded live
+  or pasted — takes its groove by itself. `PRINT GROOVE` (octalab menu)
+  prints the bank's grooves again, hand edits on grooved trigs included.
 
-Then **pool presets**: eight grooves and their settings saved under a name
+Next: **pool presets**: eight grooves and their settings saved under a name
 and loaded into any bank, from **[LEFT]** on the pool page.
 
 ### Open questions
@@ -160,14 +165,59 @@ and loaded into any bank, from **[LEFT]** on the pool page.
   scales are allowed.
 - **MKII**: the same OS image; untested.
 
+## Generating trigs: the GENERATOR page
+
+The GRID PAGE **above** the grid (**[UP]** in grid recording): a generator per
+track that adds a rhythm to the trigs you placed — your trigs stay where they
+are, the generator only fills the other steps. Its first mode is
+**euclidean**, after the euclidean mode of Elektron's Digitakt II: two
+generators spread their pulses as evenly as possible over the track's length,
+each with its own rotation, combined by a boolean operator, and the result
+rotated again.
+
+![The GENERATOR page, as the Octatrack draws it](docs/img/generator_page.png)
+
+*The GENERATOR page, drawn by the Octatrack's own firmware (captured in an
+emulator), in the stock look of the pages where the six encoders work (EFFECT
+SETUP, LFO SETUP): track 2 in EUCL — 5 pulses XOR 3 pulses rotated +2, the
+whole rotated −1; only track 2 has a generator (`-E------`).*
+
+- **LEVEL chooses the mode** (OFF, EUCL — more may come), shown large on the
+  left with the track's LENGTH and the step PAGE the trig keys show; at the
+  bottom, each track's mode letter.
+- **The six encoders, where the cells are**: A PL1 · B PL2 (pulses, up to the
+  length) · C OP (OR, XOR, AND, SUB) / D R01 · E R02 (the two rotations) ·
+  F TRO (the result's rotation). The trigs appear on the trig keys as you
+  turn.
+- **Your trigs are never moved.** Press a generated trig, or give it a
+  parameter or a sample lock, and it becomes yours: it stays, whatever the
+  generator does next. Trig keys, copy and paste, locks with a trig held work
+  as usual on the page.
+- **The track's length is the generator's** — normal or per-track scale; a
+  length changed in the SCALE menu makes the rhythm again.
+- **Leaving never asks**: [ENTER], [EXIT], [DOWN] close the page, everything
+  stays live; [REC] also leaves grid recording. **LEVEL back to OFF** takes a
+  track's generated trigs away (a YES/NO first when it has settings).
+  **[FUNCTION] held + LEVEL down prints** the track — its trigs stay as
+  ordinary trigs, the generator is forgotten (the Digitakt's [FUNC] + EUC
+  off); `PRINT EUCLID` in the octalab menu does it for the whole bank.
+- **CLEAR, then undo**: after the stock CLEAR TRIGS or CLEAR PATTERN a
+  generator sleeps; the stock undo brings its trigs back and wakes it.
+- **Kept with the project**, in a small file of octalab's own beside the
+  groove map (`octalab_generators.map`), written and read with it.
+
+**State:** on the unit (MKI) since 15 Sep 2026, working — five builds that day,
+each after a test on the unit. Audio tracks.
+
 ## On hold: a Grids-style generator
 For a week octalab carried a trig generator inspired by Mutable Instruments'
 **Grids** ("topographic drum sequencer"): a map of rhythms explored with two
 encoders, a fill amount per track, the trigs printed as you turned. It ran on
 the unit — and in use it brought little to making music on the Octatrack. It
 is put aside; the code stays in the workshop in case someone has the idea
-that makes it worth it. **Generation itself goes on** (see *What it may
-explore next*): what was parked is this one generator, not the idea.
+that makes it worth it. **Generation itself went on**: the GENERATOR page
+(above) is laid out to take other modes — Grids among them, should it come
+back.
 
 ![The GRIDS page: as built, and a rough corrected mock-up](docs/img/grids_before_after.png)
 
@@ -199,7 +249,8 @@ whatever you were doing.
 ![The octalab menu](docs/img/octalab_menu.png)
 
 It has one row per subject — the sample pool, the LFOs, the effects, the
-scenes, the trigs, the track — and each row shows one action:
+scenes, the trigs, the grooves, the generators, the track — and each row
+shows one action:
 
 - **LEVEL** (or the up/down arrows) moves between rows;
 - **[LEFT] / [RIGHT]** choose the row's action (`>` shows there is more);
@@ -231,6 +282,10 @@ another key, still does what it always did. Some functions have options, in
 | `RANDOM SMP LOCKS` | gives every normal (red) trig of the current track a sample lock to a random sample from the pool | ✅ |
 | `CLEAR P-LOCKS` | removes every parameter lock of the current track in the current pattern; trigs and sample locks stay | ✅ |
 | `CLEAR SMP LOCKS` | removes every sample lock of the current track in the current pattern | ✅ |
+| **groove** | | |
+| `PRINT GROOVE` | prints the current bank's grooves again, from each track's trigs as they were before its groove — hand edits on grooved trigs go back to the groove | ✅ |
+| **euclid** | | |
+| `PRINT EUCLID` | makes every generated trig of the current bank an ordinary trig and forgets the bank's generators | 🚧 |
 | **track** | | |
 | `INIT TRACK` | puts the current track back the way a new project starts it, trigs kept — a clean sound under the same sequence | ✅ |
 
@@ -239,7 +294,7 @@ another key, still does what it always did. Some functions have options, in
 | function | shortcut | what it does | |
 |---|---|---|---|
 | **Quick access to the sample edit window on MK1** | **[TRIG] + [BANK]** (grid recording) | opens the **audio editor on the sample locked on that trig** — or on the sample the track's machine plays (STATIC and FLEX); the trig stays as it was. [BANK] alone works as before | ✅ |
-| **GRID PAGES** | **[DOWN] / [UP]** (grid recording, no trig held) | pages under the grid for entering and shaping trigs; GROOVE is the first | 🚧 |
+| **GRID PAGES** | **[DOWN] / [UP]** (grid recording, no trig held) | pages beside the grid for entering and shaping trigs: GROOVE under it, GENERATOR above it | ✅ |
 | **Groove pool** | **[BANK] + [ENTER]** (anywhere), **[BANK]** (on a GROOVE page) | the current bank's eight groove slots; the bank prompt's [ENTER] did nothing | 🚧 |
 
 ## What it may explore next
@@ -247,15 +302,14 @@ another key, still does what it always did. Some functions have options, in
 Directions, not a roadmap — each one is tried on the unit and kept only if it
 earns its place.
 
-- **Grooves**: the groove map (the pools and settings kept with the
-  project) and pool presets first; then every pattern scale, not only 1X;
-  MIDI files as a source; Live's RANDOM, as far as the sequencer allows; then
-  trig probability and trig count in the same spirit — native features,
-  given an interface that makes them playable.
-- **Generation, still**: work on generating trigs goes on beside the grooves
-  — euclidean rhythms, densities, trigless locks spread over a share of the
-  steps (a first version ran on the unit), each on a page where the result
-  shows as you turn.
+- **Grooves**: pool presets; every pattern scale, not only 1X; MIDI files as
+  a source; Live's RANDOM, as far as the sequencer allows; then trig
+  probability and trig count in the same spirit — native features, given an
+  interface that makes them playable.
+- **Generation**: more GENERATOR modes; the native trig probability on
+  generated trigs; MIDI tracks; the track's length set from the page;
+  trigless locks spread over a share of the steps (a first version ran on
+  the unit).
 - **More pages on GRID PAGES** for entering and shaping trigs.
 - **Controlled randomness** — variations around the current values rather
   than a fresh draw.

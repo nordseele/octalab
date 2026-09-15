@@ -179,3 +179,17 @@ lock or the machine's sample, the trig stays, [BANK] alone is unchanged.
 → [`INPUT.md`](INPUT.md) §9
 
 → [`TRIGS.md`](TRIGS.md)
+
+## Pages over GRID RECORDING: a held trig, and the SETUP window's calls ✅
+
+Holding a trig registers the stock's trig-held input map over any other;
+LEVEL then opens the sample-lock list and the popup engine frees the popup
+under it without its closed callback — a map left behind that swallows the
+trig's release leaves `0x460d174a` set, the trig held for good (REC offers
+TRIG COPY, the sequencer will not stop). The current track's key pressed
+again opens the slot list over any popup. The SETUP windows' frame, dotted
+3 × 2 grid and centred text are callable for a page of one's own
+(`0x400570b8`, `0x40011a58`, `0x40012004`, `0x40013904`), the font records
+at `0x400ba812..`. Run on a MKI (15 Sep 2026).
+
+→ [`INPUT.md`](INPUT.md) §10
