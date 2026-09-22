@@ -244,9 +244,10 @@ type = the machine type, slot = the part's slot byte for it
 (`part + 0x2ca + track*5 + type`), or the recorder buffer `track + 0x80` when
 `0x460d10cc` is set; `0x4006e160` opens only when no popup is up.
 
-**octalab (v26)** hooks the BANK press: in grid recording, on an audio track,
-with a trig key physically down (`FUN_4003171c`), it opens the editor on that
-step's sample lock (record byte 31), or on the machine's sample as
+**OCTALAB-only shortcut (v26, not stock):** a hook on the BANK press, in grid
+recording on an audio track, with a trig key physically down
+(`FUN_4003171c`), opens the editor on that step's sample lock (record byte 31),
+or on the machine's sample as
 [TRACK]+[BANK] picks it, then does `FUN_4004f5f8`'s bookkeeping and leaves
 `0x460e73c2` at 0; otherwise the two displaced instructions and `0x4007af88`.
 

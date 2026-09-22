@@ -12,14 +12,15 @@ identified as RAM. ✅ marks a directly decoded path or a result observed on a
 MKI; 🟡 marks a tentative interpretation or an emulator-only measurement
 awaiting an isolated hardware test. A row can contain both.
 
-| Gap | OCTALAB finding | Boundary |
+| Gap | Stock OS finding and how OCTALAB checked it | Boundary |
 |---|---|---|
 | Sequencer steps and locks | ✅ Four placeable trig masks each cover 64 steps; the exact name of the `+0x10` type remains 🟡. The per-step record is 32 bytes; byte 31 is the sample lock. The stock sample-lock store `0x40040ee0` works outside the picker on a MKI. [Trig evidence](TRIGS.md) | The step evaluator and full scheduling path remain open. |
 | Pattern length and scale | 🟡 The SCALE page reads normal-mode length/scale at `pattern + 0x8e53/+0x8e54`, per-track length/scale at `TRAC + 0x50/+0x51`, and master length at `pattern + 0x8e50`. [Field map](FINDINGS.md#pattern-length-and-scale--code-read) | Pattern chaining and the complete SCALE-menu write path remain open. |
 | Card filesystem | ✅ The live FAT implementation has a 23-slot vtable at `0x46c823fa`; the stock sample path calls the recursive directory walker `0x40090a14`. [Filesystem evidence](FS_LAYER.md) | This does not map the entire FAT implementation or card timing. |
 | STATIC sample loading | ✅ The storage job follows `ot_static_slot_load` with post-load setup and refreshes. Without these, a slot can display its name but cannot preview or trig; verified on a MKI. [Loading evidence](SLOT_LOADING.md) | Real-time STATIC streaming remains open. |
 | Recorder reservation | 🟡 In an emulated project, each of eight recorders held 460 blocks of `0x1800` bytes: 2,826,240 bytes, or 16.0 seconds of 16-bit stereo at 44.1 kHz. The length and cap arrays are at `0x461053a8` and `0x461053e8`. [Findings](FINDINGS.md) | This measures one default project configuration in an emulator, not every recorder setting on hardware. |
-| Audio editor and saving | ✅ [TRIG]+[BANK] opened the stock audio editor on a held trig's sample or the track sample on a MKI. CAPTURE's stock WAV save path wrote real audio on the unit. The writer `0x40024168` takes its object from RAM globals `0x460be9e8` (kind) and `0x460be9ec` (object); leaving these unset produced header-only WAV files, then setting them before each job fixed the failure on the unit. [Editor](INPUT.md) · [saving](FINDINGS.md) | The editor's internal edits and all storage-job completion paths remain open. |
+| Audio editor entry points | ✅ The stock [TRACK]+[BANK] path selects a sample with `0x4006de34(type, slot)` and opens its editor with `0x4006e160()`. **[TRIG]+[BANK] is an OCTALAB-added shortcut, not a stock gesture**: it reused those native calls to open the editor on a held trig's sample lock, and ran on a MKI. [Editor evidence](INPUT.md) | The editor's internal edit operations remain open. |
+| WAV saving | ✅ The stock writer `0x40024168` reads the object to save from RAM globals `0x460be9e8` (kind) and `0x460be9ec` (object). OCTALAB's CAPTURE initially left them unset on one path and produced header-only WAVs; setting them before each job made the stock path write real audio on a MKI. [Saving evidence](FINDINGS.md) | Other storage-job completion paths remain open. |
 
 The [findings index](FINDINGS.md) also covers input-map layers and Part,
 pattern, and SRAM copies. Those refine areas the review already describes as

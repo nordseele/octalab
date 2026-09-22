@@ -15,6 +15,11 @@ Each document marks its own claims; this index does not upgrade any of them.
 
 **No Elektron binary is redistributed here**, in any form.
 
+**Scope.** A stock OS finding describes code or data present in the unmodified
+image. When an OCTALAB feature exercises a stock routine, the feature or
+shortcut is identified separately; its hardware test does not make that
+feature a native Octatrack behavior.
+
 ---
 
 ## The filesystem layer ✅
@@ -168,14 +173,15 @@ the scale in normal mode; per track `TRAC + 0x50` the length and `+0x51` the
 scale; `pattern + 0x8e50` the master length (short, −1 = INF). Pattern =
 `bank + p*0x8ed8`.
 
-## [TRIG]+[BANK] in grid recording, and the held-trig bookkeeping ✅
+## Stock audio-editor calls, exercised by OCTALAB's [TRIG]+[BANK] shortcut ✅
 
 Grid recording is `0x460d1736 != 0` (the trig keys' dispatcher `0x40060ce0`);
 [BANK] ignores held trigs; stock [TRACK]+[BANK] opens the audio editor with
 `0x4006de34(type, slot)` + `0x4006e160()`; the bookkeeping that keeps a held
-trig in place after an edit is `FUN_4004f5f8`'s. A hook built on these runs
-on a MKI (12 Sep 2026): [TRIG]+[BANK] opens the editor on the trig's sample
-lock or the machine's sample, the trig stays, [BANK] alone is unchanged.
+trig in place after an edit is `FUN_4004f5f8`'s. **OCTALAB adds** a hook built
+on these; it runs on a MKI (12 Sep 2026): [TRIG]+[BANK] opens the editor on
+the trig's sample lock or the machine's sample, the trig stays, [BANK] alone
+is unchanged.
 
 → [`INPUT.md`](INPUT.md) §9
 
