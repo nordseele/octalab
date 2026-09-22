@@ -15,7 +15,7 @@ files, and `emu_frames.poke_trig` sets one in RAM through the bank pointer at
 |---|---|
 | `0x00` | sample / note trigs (red) ✅ |
 | `0x08` | trigless trigs (full-bright green) ✅ |
-| `0x10` | trigless locks (half-bright green) ✅ |
+| `0x10` | trigless locks (half-bright green) 🟡 — type label still tentative |
 | `0x18` | one-shot trigs (yellow) ✅ |
 | `0x20` + `0x28` + `0x30` | a **recorder trig** — all three at once ✅ |
 | `0x38` | ⬜ not identified |
@@ -181,7 +181,7 @@ files. That is how octabam settled the recorder trig, it needs no disassembly,
 and the card mounts from the workshop.
 
 
-## Four placeable trig types, one mask each ✅ (8 Sep 2026)
+## Four placeable trig masks, one per type ✅ / 🟡 (8 Sep 2026)
 
 Measured on a project with one of every trig type on track 3 (`PROJECT 260908B`,
 bank 1, pattern A01):

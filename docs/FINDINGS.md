@@ -4,7 +4,8 @@ For other firmware projects and their agents. Each entry is a finding that the
 upstream repositories still marked open when it was written, with a pointer to
 the document that carries the evidence.
 
-**The image.** Every address is in OS 1.40C, MAIN OS sha256 `164f3122…`,
+**The image.** Every address is in OS 1.40C, MAIN OS sha256
+`164f31224bf61181e3f50e7dec40df9afcae5b16dbf6e4c0d0cc5e986af0a84e`,
 1,112,560 bytes, load base `0x40000400` — VA = file offset + base. An address
 without that identity means nothing.
 
@@ -99,13 +100,13 @@ function, but its handler paired by position was wrong ❌.)
 
 → [`TRIGS.md`](TRIGS.md)
 
-## Current pattern, current part, machine type ✅
+## Current pattern, current part, machine type 🟡 (emulator)
 
 `[0x80000004]` (mirror `0x100b14d0`) is the current pattern and `0x100b14cf`
 (mirror `0x80000003`) the current part — measured under emulation by the
 firmware's own project loader, and consistent with how every reader in the
 image uses them. Machine type 0 is STATIC, 1 FLEX: the LOCK picker titles
-itself from it.
+itself from it. This mapping has not been isolated on hardware.
 
 → [`TRACK.md`](TRACK.md)
 
@@ -193,3 +194,17 @@ again opens the slot list over any popup. The SETUP windows' frame, dotted
 at `0x400ba812..`. Run on a MKI (15 Sep 2026).
 
 → [`INPUT.md`](INPUT.md) §10
+
+## Recorder reserve and WAV save object 🟡 / ✅
+
+In an emulated OS 1.40C project, each of eight recorder buffers held 460
+blocks of `0x1800` bytes: 2,826,240 bytes, or 16.0 seconds of 16-bit stereo
+at 44.1 kHz. This is one default recorder configuration, not a hardware
+measurement of every possible reserve setting. The stock WAV writer
+`0x40024168` reads the kind and object from RAM globals `0x460be9e8` and
+`0x460be9ec`. CAPTURE originally omitted these on one save path and wrote
+header-only WAVs; setting them before each storage job produced real audio on
+the MKI (21 Sep 2026). These observations answer part of the recorder and
+sample-saving gaps in the community coverage review.
+
+→ [`FIRMWARE_COVERAGE_RESPONSE.md`](FIRMWARE_COVERAGE_RESPONSE.md)

@@ -10,14 +10,20 @@ chosen, applied in one gesture, then yours to keep, edit or throw away. It
 also adds **shortcuts to the stock workflow**. It adds **no new effects and no
 new synthesis**; other projects already cover that ground.
 
+## Contents
+
+- [Grooves](#grooves)
+- [CAPTURE](#capture)
+- [GENERATOR](#generator)
+- [Octalab menu](#octalab-menu)
+
 ## An exploration, not a product
 
 octalab is a **workshop exploring what can be added to the Octatrack's own
 firmware** — what the sequencer and the pages will accept, and what is worth
 having once it runs on the unit. It is not a finished set of features on its
-way to a release: new builds reach the unit almost every day, pages are
-redesigned after each test, and whole directions are tried and put aside (see
-*On hold* below). Some functions may settle and be shared as a module of
+way to a release: new builds reach the unit often, and pages are redesigned
+after each test. Some functions may settle and be shared as a module of
 octabam's remixer (below); others will stay experiments.
 
 This repository publishes no firmware, no build, no flashing procedure — and,
@@ -27,7 +33,7 @@ the firmware on the way.
 
 ---
 
-## Grooves — with your own groove files
+## Grooves
 
 The first direction octalab explores is a groove workflow after the **groove
 pool of Ableton Live**: a groove — the timing and the dynamics of a real
@@ -102,7 +108,7 @@ It uses the Octatrack's own sequencer — no new engine:
 ### The track's GROOVE page
 
 In grid recording, **[DOWN]** walks from the grid to the **GRID PAGES**: GROOVE
-under the grid, and **[UP]** to GENERATOR above it (see *Generating trigs*).
+under the grid, and **[UP]** to [GENERATOR](#generator) above it.
 
 ![A track's GROOVE page](docs/img/groove_page.png)
 
@@ -165,7 +171,47 @@ and loaded into any bank, from **[LEFT]** on the pool page.
   scales are allowed.
 - **MKII**: the same OS image; untested.
 
-## Generating trigs: the GENERATOR page
+## CAPTURE
+
+CAPTURE is both a **sampling notepad and a creative tool**: it makes it quick
+to turn sounds into a playable kit of individual samples or a sliced sample
+chain. It borrows the selected track's recorder, captures external inputs or
+a track's audio onto trig-key pads, and lets you play and shape the results
+right away. Three ways to use it:
+
+- **TRIG-key sampling (HOLD mode):** arm recording, press an empty trig pad to
+  capture a sound, and release it to stop. The filled pad plays the sound back
+  immediately — a quick, Koala-style way to build a set of samples on the fly.
+- **CHOP:** start one continuous recording from a playing source. Press the
+  next empty trig pad where you want a cut: the piece just recorded becomes a
+  pad, and recording continues into the next one. This turns a longer sample
+  into playable slices as you listen.
+- **DICT:** set a level threshold and arm a pad. Recording starts when a sound
+  crosses it and stops automatically after the sound falls quiet, suited to
+  collecting individual hits and short transients.
+
+Trim and shape the pads, then save the kit as individual WAVs and the sample
+chain as one WAV with slice markers in its `.ot` file. An optional slot chooser
+loads the chain through the Octatrack's own storage path.
+
+**MAP brings a sketch into the sequencer.** Select one or several track keys,
+then confirm: CAPTURE saves the sample chain if needed and loads it into each
+selected track's own STATIC or FLEX slot in one operation. The tracks keep
+their machine and playback settings while the new chain becomes available to
+them. The planned single-pad gesture will send one recorded pad as a whole
+sample to the chosen tracks; that path is not in the hardware-tested build yet.
+
+![CAPTURE interface mock-up during recording](docs/img/capture_mockup.png)
+
+*CAPTURE UI mock-up, enlarged 6× from the original 128 × 64 pixel design.
+This is a software mock-up, not a photograph of the unit.*
+
+**CAPTURE has been tested on an Octatrack MKI**: recording, pad playback and
+editing, saving real audio, slot assignment and the REC arm and
+overwrite confirmation have run on the unit. The [firmware findings](docs/FINDINGS.md)
+record what CAPTURE taught us about the stock recorder and save jobs.
+
+## GENERATOR
 
 The GRID PAGE **above** the grid (**[UP]** in grid recording): a generator per
 track that adds a rhythm to the trigs you placed — your trigs stay where they
@@ -209,18 +255,7 @@ whole rotated −1; only track 2 has a generator (`-E------`).*
 **State:** on the unit (MKI) since 15 Sep 2026, working — five builds that day,
 each after a test on the unit. Audio tracks.
 
-## Previous experiments: a Grids-style generator
-For a week octalab carried a trig generator inspired by Mutable Instruments'
-**Grids** ("topographic drum sequencer"): a map of rhythms explored with two
-encoders, a fill amount per track, the trigs printed as you turned. It ran on
-the unit — and in use it brought little to making music on the Octatrack. It
-is put aside; the code stays in the workshop in case someone has the idea
-that makes it worth it. **Generation itself went on**: the GENERATOR page
-(above) is laid out to take other modes — Grids among them, will come back soon.
-
-![The GRIDS page: as built, and a rough corrected mock-up](docs/img/grids_before_after.png)
-
-*Left: the last GRIDS page as the unit drew it. Right: a very rough mock-up of the UI*
+**Coming soon:** GRIDS will have its own page in the GRID REC PAGES.
 
 ## Part of octabam's remixer
 
@@ -238,11 +273,13 @@ ems-octakit's Kits under octabam's emulator.
 offered through octabam's remixer one day; nothing here is a promise of a
 release.
 
-## The octalab menu: double-tap [FUNCTION]
+## Octalab menu
 
 Everything octalab adds as a one-gesture function is in one list. **Tap
 [FUNCTION] twice, quickly**, from almost any screen, and the list opens over
 whatever you were doing.
+
+**The screen below shows V1**, tested on an Octatrack MKI.
 
 ![The octalab menu](docs/img/octalab_menu.png)
 
@@ -257,6 +294,15 @@ shows one action:
 An action that erases asks first (YES/NO). [FUNCTION] alone, or held with
 another key, still does what it always did. Some functions have options, in
 **OCTALAB**, a fifth category of the MAIN MENU (`[FUNCTION] + [MIXER]`).
+
+### Menu V2: UI work in progress
+
+V2 is the next project. These are early software mock-ups for its new UI,
+enlarged 4× from the 128 × 64 pixel designs; they are not firmware screenshots.
+
+![V2 menu mock-up: SAMPLES category](docs/img/octalab_menu_v2_samples_mockup.png)
+
+![V2 menu mock-up: FILL action](docs/img/octalab_menu_v2_fill_mockup.png)
 
 ## Functions
 
@@ -293,7 +339,7 @@ another key, still does what it always did. Some functions have options, in
 |---|---|---|---|
 | **Quick access to the sample edit window on MK1** | **[TRIG] + [BANK]** (grid recording) | opens the **audio editor on the sample locked on that trig** — or on the sample the track's machine plays (STATIC and FLEX); the trig stays as it was. [BANK] alone works as before | ✅ |
 | **GRID PAGES** | **[DOWN] / [UP]** (grid recording, no trig held) | pages beside the grid for entering and shaping trigs: GROOVE under it, GENERATOR above it | ✅ |
-| **Groove pool** | **[BANK] + [ENTER]** (anywhere), **[BANK]** (on a GROOVE page) | the current bank's eight groove slots; the bank prompt's [ENTER] did nothing | 🚧 |
+| **Groove pool** | **[BANK] + [ENTER]** (anywhere), **[BANK]** (on a GROOVE page) | the current bank's eight groove slots; the bank prompt's [ENTER] did nothing | ✅ |
 
 ## What it may explore next
 
@@ -308,7 +354,7 @@ earns its place.
   generated trigs; MIDI tracks; the track's length set from the page;
   trigless locks spread over a share of the steps (a first version ran on
   the unit).
-- **More pages on GRID PAGES** for entering and shaping trigs.
+- **More GRID REC PAGES** for entering and shaping trigs.
 - **Controlled randomness** — variations around the current values rather
   than a fresh draw.
 - **More workflow shortcuts** in the spirit of [TRIG] + [BANK].
@@ -328,6 +374,8 @@ earns its place.
 The reverse-engineering findings behind these functions — addresses, data
 layouts, the traps that cost a failed build, each with its confidence level
 and the image it was read from — are in **[`docs/FINDINGS.md`](docs/FINDINGS.md)**.
+A [short coverage response](docs/FIRMWARE_COVERAGE_RESPONSE.md) points to the
+findings that partly answer gaps raised in another firmware review.
 
 octalab is an independent workshop, not a fork. It reads
 [octamax](https://github.com/mxldyn/octamax),
