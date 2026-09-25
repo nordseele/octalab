@@ -22,6 +22,19 @@ feature a native Octatrack behavior.
 
 ---
 
+## Audio input LED meters ✅ code and emulator; 🟡 physical order
+
+`0x40040938` turns four input-level words into the MKI's bi-colour LED
+brightness, using a leading-bit lookup table. Two additional words and LED
+ids are enabled on MKII. The driver and tables are byte-identical in the
+OL90U image reported as flashed on the owner's MKI. Isolated input slots
+were checked under emulation; their names do **not** establish which
+physical jack is A, B, C or D. The MKII pair's identity remains a hypothesis.
+
+→ [`LED_METERS.md`](LED_METERS.md)
+
+---
+
 ## The filesystem layer ✅
 
 The 23-slot FS vtable at `0x46c823fa`, its three implementations and which one
