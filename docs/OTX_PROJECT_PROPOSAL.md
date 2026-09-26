@@ -13,6 +13,11 @@ a falsifier stated, ❌ retracted.
 
 ## Read this first
 
+**Terminology.** The *OTX shared settings store* (short: *OTX store*) is
+the one logical container that all modules share: `otx.work` / `otx.strd` in
+a project, and optionally one UNIT file on the card. It is a shared file, not
+a file system.
+
 **One shared container holds the meta-settings of every module.** The
 proposal is one logical OTX store in each project folder, represented by
 `otx.work` and `otx.strd`. Both contain all modules, never one file per module.
@@ -106,13 +111,12 @@ settings. Concretely:
 
 ### 2.1 Where settings live now
 
-- **In the Part** — every FX module's twelve parameters. ✅ `MODULES.md`
-  names the trap: "a stored value does the same, and the schema cannot see
+- **In the Part** — every FX module's twelve parameters. ✅ Octabam's [`MODULES.md`](https://github.com/sambanks/octabam/blob/main/docs/remixer/MODULES.md) names the trap: "a stored value does the same, and the schema cannot see
   it". A Part saved under an older layout gives the new layout its old bytes,
   and a value outside the new count stalls the sequencer. Part parameters
   stay where they are. This proposal is for everything that is *not* a Part
   parameter.
-- **Private files** — Octalab (outside this repository) writes
+- **Private files** — Octalab (this repository) writes
   `<set>/<project>/octalab_grooves.map` ("OTGM" v1, up to 40,228 B) and
   `octalab_generators.map`. ✅ MKI 15 Sep 2026: survives a power cycle, a
   SYNC and a project change. Each file has its own magic, its own checksum,
@@ -124,24 +128,28 @@ settings. Concretely:
 
 ### 2.2 What the firmware already gives us
 
-- **A storage task that can run our jobs.** ✅ MKI (Octalab v41). A Detour at
-  `0x4008485e` gives the stock storage task a job type of our own (`0x40`).
+- **A stock job queue that can run our jobs.** ✅ MKI (Octalab v41). A Detour at
+  `0x4008485e` gives a job type of our own (`0x40`) to the stock engine job
+  queue: the priority-1 "engine" task (dispatcher `0x4008445c`), the same
+  queue that runs LOAD, SAVE and SYNC, not the priority-5 FAT/ATA task.
   The job is posted from a UI timer, and before the stock jobs 7 (SYNC TO
   CARD), 0xb/0xc/0xd (project change), 0x11 (SAVE PROJECT) and 0x12 (SAVE
   BANK). Writes go through the stock buffered calls
   `0x40016864` open / `0x400166b8` write / `0x4001677c` close.
-  Octalab removes the file and writes it again. **That is not safe against
-  a power cut in the middle of a write**, which is one reason to replace it.
+  Octalab removes the file and writes it again, as the stock does for its
+  own files (job `0x16`: remove, then write). A power cut during a write can
+  leave the file missing or short; draft 2 accepts that same risk and relies
+  on the saved `otx.strd` copy (§3.3).
 - **The project folder** is `"%s/%s"` of the set path `0x100f8480` and the
   project name `0x100f8378` ✅. `FUN_400255ec() != 0` means a project is
   open.
 - **A fifth MAIN MENU root category** made only of data (✅ MKI 7 Sep 2026;
-  `MAINMENU.md` §5): a heading row has a null action and the cursor skips
+  Octabam's [`MAINMENU.md`](https://github.com/sambanks/octabam/blob/main/docs/firmware/MAINMENU.md) §5): a heading row has a null action and the cursor skips
   it; the rows carry their value in the label. A shared toggle routine finds
   the row from the descriptor's absolute selection at `+0x0c` (✅ MKI 8 Sep
   2026). There is **no free page id** for a stock-style settings page, so a
   list whose labels change is the widget.
-- **The limit this removes.** ✅ `MAINMENU.md` §5: "Two modules that both
+- **The limit this removes.** ✅ [`MAINMENU.md`](https://github.com/sambanks/octabam/blob/main/docs/firmware/MAINMENU.md) §5: "Two modules that both
   grow one submenu cannot coexist (the build refuses the second)". Each
   module that wants a row currently has to own a menu.
 
@@ -314,7 +322,8 @@ value on repeated loads. The `unit_loaded` event must occur before a
 setting can affect USB descriptors; that boot ordering has not yet been
 measured (§5).
 
-Automatic OTX writes run from the storage task, never the UI task. The UI
+Automatic OTX writes run as jobs in the stock engine job queue (§2.2), never
+in the UI task. The UI
 must not acquire or wait on `FS_MUTEX` for OTX. Edits are coalesced into one
 bounded job after roughly two seconds idle (initial target to tune on MKI),
 including when playback is running. Automatic OTX writes are deferred while
@@ -323,7 +332,8 @@ pending until storage can safely resume. Writes are serialized with stock
 project and other CF writes. Explicit SAVE and project-switch behavior with
 pending edits still needs a rule and hardware test.
 
-MKI evidence from OLT01/OLT02 (26 Sep 2026): individual CF writes reached
+MKI evidence from OLT01/OLT02, Octalab's tape-recorder diagnostic builds
+(26 Sep 2026): individual CF writes reached
 about 1.2 s under STATIC playback; with CAPTURE active, UI stalls reached
 1.215 s and followed a 1.206 s write. UI-side waiting on `FS_MUTEX` is a
 strong hypothesis, not a proven trace. OLT01 measured 1.4–2.1 MB/s while
@@ -343,14 +353,19 @@ make a playback/CAPTURE timing gate mandatory.
   `unit.otx`): card-wide settings for all modules, with no `.strd` copy. The
   persistence and recovery policy for a missing/unreadable card is open.
 
-Sam's stock-style write proposal is `open("w")`, write, close. Stock
-`project.work` uses the same primitive and accepts the same interrupted-write
-risk; this is not an atomic write guarantee. The observed OS open strings are
-`"r"`, `"w"` and `"a"`, without a visible `"r+"`. The former
-in-place A/B-slot plan depended on a write/read mode or seek behavior that
-had not been proven, so draft 2 drops the fixed slots, sector alignment,
-generation counters and `slot_bytes`. A power cut can truncate `otx.work`.
-If its CRC fails, load a valid `otx.strd` and visibly report the fallback;
+Sam's stock-style write proposal is `open("w")`, write, close. The stock
+rewrites its own project files the same way after removing the old file (job
+`0x16`); an open for writing does not itself shorten a file, and the length
+is set at close. This is not an atomic write: a power cut can leave
+`otx.work` missing or short, the same risk stock `project.work` accepts. Only
+`"r"` and `"w"` are identified as open modes (adjacent strings at
+`0x400b3289`); the image contains no `"r+"` string. In-place rewriting is
+possible (the stock buffered seek `0x4001660c` rewrote WAV headers in place
+on the MKI in OLT01/OLT02, and Octakit rewrites a preallocated file in
+place), but draft 2 keeps the simpler stock-style rewrite and drops the
+former fixed A/B slots, sector alignment, generation counters and
+`slot_bytes`.
+If `otx.work` fails its CRC, load a valid `otx.strd` and visibly report the fallback;
 that reverts unsaved OTX edits. If neither copy is valid, do not silently
 write defaults over unreadable data. A genuinely new project with no OTX
 files is a distinct case and starts from declared defaults.
