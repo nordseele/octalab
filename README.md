@@ -36,10 +36,12 @@ the firmware on the way.
 
 ## Shared project settings proposal
 
-[The `.OTX` proposal](docs/OTX_PROJECT_PROPOSAL.md) is a discussion draft for
-a common format across alternative Octatrack firmwares. One shared project
-file would hold the **meta-settings of all modules**, including those absent
-from the current firmware; unknown records must survive a save unchanged.
+[The OTX proposal, draft 2](docs/OTX_PROJECT_PROPOSAL.md) and its
+[module settings guidelines](docs/OTX_MODULE_GUIDELINES.md) describe a common
+format across alternative Octatrack firmwares. One logical project store,
+represented by `otx.work` and `otx.strd`, would hold the **meta-settings of all
+modules**, including those absent from the current firmware; unknown records
+must survive a save unchanged.
 Grooves, Kits, patches and other material that musicians move between
 projects would stay in **separate files owned and formatted by each module**.
 The format and its firmware support are not implemented yet.
