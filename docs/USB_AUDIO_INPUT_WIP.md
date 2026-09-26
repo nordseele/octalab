@@ -1,9 +1,12 @@
 # USB audio into Octatrack A/B/C/D — WIP findings
 
-26 September 2026. Target: Octatrack MKI, stock OS 1.40C as the base image.
-This is a research handoff, **not an implemented or hardware-tested USB input
-feature**. Confidence labels distinguish a DSP emulator observation from a
-working path on the unit.
+26 September 2026 baseline; updated 27 September. Target: Octatrack MKI,
+stock OS 1.40C as the base image. The table below records Octalab's research
+**before** Bryan Tysinger's [Octabam USB input PR #468](https://github.com/sambanks/octabam/pull/468).
+Bryan now reports four host channels working as A–D on his unit. The external
+PR remains a draft and has not been integrated into Octalab. See our
+[PR #468 buffer and latency review](USB_AUDIO_PR468_REVIEW.md) for the
+implementation's memory placement, local build checks and open tests.
 
 For the output-only baseline and MKI responsiveness report, see
 [USB AUDIO LIGHT WIP](USB_AUDIO_LIGHT_WIP.md).
@@ -28,7 +31,7 @@ input processing. That would avoid changing every source table at once. This
 is a proposal, not a demonstrated route, and does not provide simultaneous
 independent jack and USB sources.
 
-The next decisive evidence is a MKI test that traces four distinct incoming
+For Octalab, the next decisive evidence is a combined-image MKI test that traces four distinct incoming
 tones through DIR/THRU, machines, recorder and CAPTURE while checking sample
 loss, drift, DSP headroom and behavior on disconnect and DISK MODE. No USB
 INPUT build or MKI USB INPUT result is claimed here.
