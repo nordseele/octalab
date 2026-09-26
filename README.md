@@ -16,6 +16,7 @@ new synthesis**; other projects already cover that ground.
 - [CAPTURE](#capture)
 - [GENERATOR](#generator)
 - [Octalab menu](#octalab-menu)
+- [Shared project settings proposal](#shared-project-settings-proposal)
 
 ## An exploration, not a product
 
@@ -32,6 +33,16 @@ here: what octalab explores, what came out of it, and what was learned about
 the firmware on the way.
 
 ---
+
+## Shared project settings proposal
+
+[The `.OTX` proposal](docs/OTX_PROJECT_PROPOSAL.md) is a discussion draft for
+a common format across alternative Octatrack firmwares. One shared project
+file would hold the **meta-settings of all modules**, including those absent
+from the current firmware; unknown records must survive a save unchanged.
+Grooves, Kits, patches and other material that musicians move between
+projects would stay in **separate files owned and formatted by each module**.
+The format and its firmware support are not implemented yet.
 
 ## Grooves
 
