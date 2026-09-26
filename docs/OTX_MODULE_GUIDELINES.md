@@ -112,12 +112,23 @@ have been coalesced; `otx.strd` is written on SAVE PROJECT. RELOAD
 PROJECT loads `otx.strd`. A valid `otx.strd` can recover an invalid `otx.work`,
 and the UI must report that recovery. Neither file is an archive of every edit.
 
-A missing or invalid `otx.strd` leaves **no proven recovery source**. The core
-must show an error and must not silently overwrite an unreadable OTX file or
-claim to have preserved unknown records. Fresh projects may start with module
-defaults, but their creation path must be distinguished from corruption. UNIT
-has no proposed `.strd` fallback, so its failure policy must be specified
-before a UNIT setting is relied on at boot.
+What the core does depends only on which files are on the card (full
+table and reasons in the proposal, §3.3):
+
+- **neither file**: a fresh project (also a stock SAVE TO NEW or a hand
+  copy); declared defaults, normal first write;
+- **`otx.work` valid**: normal, whatever `otx.strd` is; a damaged
+  `otx.strd` is only rewritten by an explicit SAVE PROJECT;
+- **`otx.work` absent or invalid, `otx.strd` valid**: recovery from
+  `otx.strd`, always reported. An *absent* `otx.work` next to a valid saved
+  copy is the usual trace of an interrupted rewrite (the stock removes the
+  old file first), never a fresh project;
+- **`otx.work` absent or invalid, no valid `otx.strd`**: damaged; error, no
+  OTX write until REPLACE SETTINGS.
+
+The core never silently overwrites an unreadable OTX file or claims to have
+preserved unknown records. UNIT has no proposed `.strd` fallback, so its
+failure policy must be specified before a UNIT setting is relied on at boot.
 
 Automatic OTX writes must run as jobs in the stock engine job queue (where
 Octalab's storage jobs already run), never in the UI task; the
