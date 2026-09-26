@@ -12,6 +12,10 @@ and takes precedence if these guidelines differ from it.
 
 ## What belongs in OTX and the common menu
 
+**Terminology.** The *OTX shared settings store* (short: *OTX store*) is
+the one container all modules share (`otx.work` / `otx.strd` per project,
+optionally one UNIT file). It is a shared file, not a file system.
+
 **OTX names the common file format for module meta-settings in a project.** Its
 agreed project filenames are `otx.work` and `otx.strd`, beside the stock project
 files. These are the working and saved copies of the **same shared store**,
@@ -115,7 +119,8 @@ defaults, but their creation path must be distinguished from corruption. UNIT
 has no proposed `.strd` fallback, so its failure policy must be specified
 before a UNIT setting is relied on at boot.
 
-Automatic OTX writes must run in the storage task, never in the UI task; the
+Automatic OTX writes must run as jobs in the stock engine job queue (where
+Octalab's storage jobs already run), never in the UI task; the
 UI must not acquire or wait on the FS mutex for OTX. Coalesce edits and queue
 one write after roughly two seconds without further edits; this is an initial
 debounce target, not a measured optimum. Defer automatic OTX writes while any
@@ -124,15 +129,17 @@ until storage can safely resume. Serialize OTX with stock saves and other CF
 writes. The behavior of an explicit SAVE or project switch with pending OTX
 changes still needs an implementation rule and MKI test.
 
-**MKI evidence, 26 Sep 2026:** OLT02 observed individual CF writes of about
+**MKI evidence, 26 Sep 2026:** OLT02, an Octalab tape-recorder diagnostic
+build, observed individual CF writes of about
 1.2 s under STATIC playback. With CAPTURE active, UI stalls reached 1.215 s
 and tracked those writes; UI-side waiting on `FS_MUTEX` is a strong
 hypothesis, not a proven call trace. OLT01 measured roughly 1.4–2.1 MB/s
 while STATIC tracks read. These are storage-system measurements, not OTX
 write timings. The OTX scheduler still needs a playback/CAPTURE stress test.
 
-Opening `otx.work` with `"w"` may truncate it on a power cut, as stock's
-`project.work` write path can. A CRC detects an incomplete file and a valid
+Rewriting `otx.work` the stock way (the stock removes the old file, then
+writes it with `"w"`) can leave it missing or short after a power cut, as
+stock's `project.work` can. A CRC detects an incomplete file and a valid
 `otx.strd` can recover it, but edits since the last saved copy can be lost.
 
 ## Common settings
