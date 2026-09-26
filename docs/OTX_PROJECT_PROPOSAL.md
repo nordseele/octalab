@@ -365,10 +365,41 @@ on the MKI in OLT01/OLT02, and Octakit rewrites a preallocated file in
 place), but draft 2 keeps the simpler stock-style rewrite and drops the
 former fixed A/B slots, sector alignment, generation counters and
 `slot_bytes`.
-If `otx.work` fails its CRC, load a valid `otx.strd` and visibly report the fallback;
-that reverts unsaved OTX edits. If neither copy is valid, do not silently
-write defaults over unreadable data. A genuinely new project with no OTX
-files is a distinct case and starts from declared defaults.
+**Fresh, normal, recovered or damaged: decided by what is on the card**
+(Sam Banks' rule of 27 Sep 2026, completed with the cases it did not list).
+"Invalid" means the whole file fails its header, length or CRC checks; one
+bad module inside a valid file is that module's `LOAD ERR` only (§3.2).
+
+| `otx.work` | `otx.strd` | Meaning | Action |
+|---|---|---|---|
+| absent | absent | Fresh: new project, stock SAVE TO NEW, hand copy | Declared defaults; normal first write |
+| valid | absent | Normal: edited, never saved | Use `otx.work`; SAVE PROJECT creates `otx.strd` |
+| valid | valid | Normal | Use `otx.work` |
+| valid | invalid | Saved copy damaged | Use `otx.work` and show a warning; an explicit SAVE PROJECT may rewrite `otx.strd` |
+| absent | valid | Interrupted rewrite | Recovery: load `otx.strd`, report it |
+| invalid | valid | Damaged working copy | Recovery: load `otx.strd`, report it |
+| invalid | absent | Damaged, no fallback | Error; no OTX write until REPLACE SETTINGS |
+| absent or invalid | invalid | Damaged, no fallback | Error; no OTX write until REPLACE SETTINGS |
+
+Why the rows Sam's three cases did not cover matter:
+- **absent `otx.work` + valid `otx.strd` must be recovery, not fresh.** The
+  stock rewrite removes the old file before writing it (job `0x16`), so a
+  power cut during an OTX write most likely leaves `otx.work` *missing*, not
+  merely invalid. Treated as fresh, the next write and SAVE PROJECT would
+  replace the good saved copy with defaults.
+- **valid `otx.work` + absent `otx.strd`** is the ordinary state of a
+  project edited but never saved; it must not raise an error.
+- **valid `otx.work` + invalid `otx.strd`** loses nothing: the working copy
+  is sound, and the user's explicit SAVE PROJECT is the moment to rewrite the
+  damaged saved copy (the only case where an unreadable OTX file may be
+  overwritten, and only by an explicit save; to confirm with the authors).
+- A fresh project and a project whose OTX pair was lost by a copy that
+  omits it look identical on the card. That is why the SAVE TO NEW / COLLECT
+  / EXPORT copy test (§5) is mandatory.
+
+Recovery from `otx.strd` reverts OTX edits made since the last SAVE PROJECT
+and is always reported. No automatic path writes defaults over an unreadable
+OTX file.
 
 The common record and TLV format remains binary, big-endian. The following
 is a **draft byte layout** for a neutral reference tool and test corpus:
