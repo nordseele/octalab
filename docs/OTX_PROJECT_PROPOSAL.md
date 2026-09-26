@@ -1,27 +1,35 @@
-# One shared `.OTX` meta-settings file for all modules
+# One shared OTX meta-settings store for all modules
 
-Draft 1 (26 Sep 2026), for discussion among authors of alternative Octatrack
-firmware. It separates the agreed design rule from encoding and integration
-choices that still need measurements. No `.OTX` parser or firmware support is
-implemented.
+A technical proposition, draft 2 (26 Sep 2026), for discussion between the
+module authors. It incorporates Sam Banks' eight comments on draft 1. It
+distinguishes the agreed design rule from on-card and UI choices that still
+need tests. Nothing here is implemented. Module authors can
+start with the companion [guidelines](OTX_MODULE_GUIDELINES.md).
+This technical proposal defines the format and takes precedence if the
+author-facing guidelines differ from it.
 
-Evidence markers: ✅ observed on the unit or in the named code; 🟡 inferred
-with a stated way to disprove it; ❌ retracted.
+Confidence markers: ✅ measured, 🟡 inferred with
+a falsifier stated, ❌ retracted.
 
 ## Read this first
 
 **One shared container holds the meta-settings of every module.** The
-proposal is `project.otx` in each project folder. Each module has a stable id
-and a block inside that file. A firmware without a module skips its block when
+proposal is one logical OTX store in each project folder, represented by
+`otx.work` and `otx.strd`. Both contain all modules, never one file per module.
+Each module has a stable id and a record in that shared state. A firmware
+without a module skips its record when
 loading and copies that block back **byte for byte** when saving. A newer
 version's unknown keys receive the same protection. Missing modules must
 never prevent a project from opening.
 
 When a setting genuinely applies across projects, the same format can be used
-in one shared `unit.otx` at the **root of the inserted CF card**. This is
+in one shared UNIT file at the **root of the inserted CF card**. Its proposed
+name is `unit.otx`; unlike a project store it has no `.strd` fallback. This is
 card-wide persistence, not internal memory that follows the physical
-Octatrack to another card. The name and location of that optional UNIT file
-still require agreement; the project file is the main proposal.
+Octatrack to another card. The exact UNIT filename and recovery policy still
+require agreement. **OTX names the shared format and its `OTX1` magic.** The
+project files use the agreed stock-style names `otx.work` / `otx.strd`; `.otx`
+is not their filename extension.
 
 **Only meta-settings belong in `.OTX`:** how a module behaves or looks,
 including menu options and generator setups. A groove, Kit, preset or other
@@ -31,15 +39,15 @@ core neither parses nor rewrites those files. This separation is the user's
 design rule, not an open choice between one shared file and one file per
 module.
 
-The shared MODULES menu shows only modules included in the firmware. An
+The shared settings menu (name still open) shows only modules included in the
+firmware, plus the core's GENERAL module. An
 alternative firmware can exchange settings only if it adopts this format and
-the same module ids. Stock project-copy commands may not carry `.otx` files;
+the same module ids. Stock project-copy commands may not carry the OTX pair;
 that behavior is a required test (§5). Nothing here is implemented yet.
-Examples use lowercase `.otx`; the file type is `.OTX` on a case-insensitive
-FAT card.
+The UNIT filename and project-copy behavior still require agreement.
 
 ```text
-SET / PROJECT / project.otx       shared meta-settings for every module
+SET / PROJECT / otx.work + otx.strd    working and saved shared state
                     ├─ org.octalab.core: page options, generator setup
                     ├─ org.example.fm: FM page options
                     └─ unknown module: retained unchanged
@@ -49,7 +57,7 @@ FM patches                        separate, FM-module-owned format
 ```
 
 If an image without the FM module edits an Octalab setting, its next save
-must leave the FM record in `project.otx` byte-identical. It need not
+must leave the FM record byte-identical in the shared OTX state. It need not
 understand, display or open the FM patch files.
 
 ---
@@ -98,12 +106,13 @@ settings. Concretely:
 
 ### 2.1 Where settings live now
 
-- **In the Part** — every FX module's twelve parameters. Existing module research names the trap: a stored Part value has no
-  schema tag that tells a changed effect how to interpret it. A Part saved under an older layout gives the new layout its old bytes,
+- **In the Part** — every FX module's twelve parameters. ✅ `MODULES.md`
+  names the trap: "a stored value does the same, and the schema cannot see
+  it". A Part saved under an older layout gives the new layout its old bytes,
   and a value outside the new count stalls the sequencer. Part parameters
   stay where they are. This proposal is for everything that is *not* a Part
   parameter.
-- **Private files** — Octalab currently writes
+- **Private files** — Octalab (outside this repository) writes
   `<set>/<project>/octalab_grooves.map` ("OTGM" v1, up to 40,228 B) and
   `octalab_generators.map`. ✅ MKI 15 Sep 2026: survives a power cycle, a
   SYNC and a project change. Each file has its own magic, its own checksum,
@@ -127,22 +136,21 @@ settings. Concretely:
   project name `0x100f8378` ✅. `FUN_400255ec() != 0` means a project is
   open.
 - **A fifth MAIN MENU root category** made only of data (✅ MKI 7 Sep 2026;
-  the MAIN MENU analysis): a heading row has a null action and the cursor skips
+  `MAINMENU.md` §5): a heading row has a null action and the cursor skips
   it; the rows carry their value in the label. A shared toggle routine finds
   the row from the descriptor's absolute selection at `+0x0c` (✅ MKI 8 Sep
   2026). There is **no free page id** for a stock-style settings page, so a
   list whose labels change is the widget.
-- **The limit this removes.** ✅ the MAIN MENU analysis: "Two modules that both
+- **The limit this removes.** ✅ `MAINMENU.md` §5: "Two modules that both
   grow one submenu cannot coexist (the build refuses the second)". Each
   module that wants a row currently has to own a menu.
 
 ### 2.3 Prior art: how monome norns does it
 
-norns offers useful prior art. This comparison draws on
-[monome's parameter reference](https://monome.org/docs/norns/reference/params),
-[mod documentation](https://monome.org/docs/norns/mods/) and the `paramset.lua`,
-`state.lua` and `pmap.lua` files in [monome/norns](https://github.com/monome/norns)
-(as read on 26 Sep 2026):
+norns has a mature answer to this problem, used by hundreds of scripts and
+mods. It is read from monome's documentation (`monome.org/docs/norns/
+reference/params`, `.../norns/mods`) and from its source (`lua/core/
+paramset.lua`, `state.lua`, `pmap.lua`, `monome/norns` main, 26 Sep 2026):
 
 - **One declarative registry.** A script declares its parameters in one
   table, `params`, which has typed entries: `number`, `option`, `control`,
@@ -203,7 +211,7 @@ norns offers useful prior art. This comparison draws on
 - **binary, not text.** The reader is ColdFire assembly. The computer tool
   (`otx.py dump`) gives the norns-style text view instead.
 - **no user preset bank in this format.** On the OT the project (with its
-  Parts/Kits) is already the snapshot. The WORK / STORED slots below are
+  Parts/Kits) is already the snapshot. The WORK / STORED files below are
   recovery and save states, not presets the user selects.
 - **no runtime enabling.** A module is in the image or it is not. The build
   does what `SYSTEM > MODS` does on norns.
@@ -212,8 +220,8 @@ norns offers useful prior art. This comparison draws on
 
 ## 3. The proposal
 
-Four parts: declarations in module manifests, one shared core, one `.OTX`
-container per scope, and one generated MODULES menu. The container owns
+Four parts: declarations in module manifests, one shared core, one logical
+OTX store per scope, and one generated shared settings menu. The core owns
 meta-settings only. A module owns the format of its separate creative files.
 
 ### 3.1 Modules declare settings; the core owns the shared file
@@ -223,7 +231,7 @@ Illustrative manifest syntax (an API proposal, not implemented):
 ```python
 store=Store(id="org.octalab.usbaudio", scope=Scope.UNIT),
 settings=(
-    Setting(key=1, name="USB AUDIO", values=("OFF", "LIGHT", "FULL"),
+    Setting(key=1, name="USB AUDIO", group="audio", values=("OFF", "LIGHT", "FULL"),
             default=0, apply=Apply.NEXT_CONNECT),
 ),
 ```
@@ -237,8 +245,19 @@ settings=(
   bounds, step and unit; `Trigger` runs an action and is never saved.
   `save=False` marks a runtime-only value. A declarative `visible=` condition
   may hide rows without changing their stored values.
-- `scope=PROJECT` puts the module's block in that project's `project.otx`.
-  `scope=UNIT` puts it in the shared `unit.otx` at the card root. One module
+- These declarations also define the ordinary UI control: `Binary` draws a
+  checkbox; `Option` draws a choice among its declared labels; `Number` draws
+  a signed 16-bit integer control constrained by `min`, `max` and `step`, with an optional
+  displayed unit. Each declares a default. The common core validates edits
+  before calling the module. A `Blob` needs an explicitly provided editor or
+  remains outside the generic scalar menu; it is never displayed as raw bytes.
+- A module may declare stable parameter-group ids, short display labels and
+  ordering (for example Octalab's `generators` group). A setting names one
+  group id; this is menu metadata, never part of its stored OTX key. Renaming
+  a group or changing the UI layout does not migrate settings.
+- `scope=PROJECT` puts the module's block in that project's shared
+  `otx.work` / `otx.strd` state. `scope=UNIT` puts it in the shared UNIT
+  file at the card root. One module
   may declare settings at both scopes; that creates one block for the module
   in each container, never `<module>.otx` files.
 - `apply=LIVE` means the module reads the current RAM value;
@@ -257,128 +276,184 @@ never become blobs in this container (§3.5).
 
 ### 3.2 Shared core, absent modules and lifecycle
 
-The build adds one DRAM core if any selected module declares settings. The
-core owns the MODULES menu, both shared containers, the storage job, dirty
+An OTX-enabled build includes one shared DRAM core and its GENERAL module,
+even if no optional module declares settings. The core owns the settings menu,
+shared PROJECT and UNIT state, the storage job, dirty
 tracking, validation and safe writes. Modules never edit `.OTX` directly.
 The build orders callbacks deterministically by module id and reports the
 order. Proposed events: `unit_loaded`, `project_loaded`, `project_saving`,
 `project_closing`, `setting_changed`.
 
-**Preservation contract, required of every firmware that adopts `.OTX`:**
+**Preservation contract, required of every firmware that adopts OTX:**
 
-1. Load only a record whose module id and schema version the image knows.
-   An absent module gets no callback and cannot block project load.
-2. Keep every unknown module record as its **exact bytes**: header, full id,
+1. Load a known module record with the supported schema major, including a
+   **newer minor**: apply known keys and preserve unknown typed TLVs exactly.
+   An unsupported major or an absent module is opaque and gets no callback;
+   neither can block the project from opening.
+2. Keep every opaque module record as its **exact bytes**: header, full id,
    payload, flags and padding. Write those bytes back unchanged on every
-   save. The same rule applies to a record from a newer, unsupported schema
-   major. Do not silently drop an unknown record to make room.
-3. Within a known module record, keep unknown setting TLVs as exact bytes
-   when the module edits known keys. Missing settings take declared defaults;
-   invalid known values take defaults without corrupting other modules.
-4. If one module's payload or callback fails validation, run that module on
-   defaults, show `LOAD ERR` on its heading, and continue loading the other
-   valid modules. Preserve the failing record for diagnosis unless the user
-   explicitly replaces it.
-5. If a new snapshot cannot fit while preserving all opaque data, **fail the
-   save visibly and keep the previous valid snapshot**. Never truncate an
-   unknown record or treat its absence from the running image as deletion.
+   save. Do not silently drop a record to make room.
+3. Within a known record, preserve unknown setting TLVs byte for byte when
+   editing known keys. A missing or invalid known value takes its declared
+   default. A known key with a different type is invalid, never coerced.
+4. Duplicate module ids are not applied; **every duplicate copy** is retained
+   unchanged. A failed payload or callback runs that module on defaults,
+   shows `LOAD ERR`, and leaves other modules available. Neither error is
+   repaired merely by opening the menu or editing another module.
+5. A dedicated `REPLACE SETTINGS` action with confirmation is proposed for
+   deliberately replacing one damaged module record. Its exact UI remains
+   open. A save must preflight all declared limits and fail visibly before
+   opening `"w"` if it cannot retain all opaque records. An interrupted write
+   may still corrupt `otx.work`; the saved-copy recovery below is separate.
 
-The core loads outside the audio ISR. A callback must be safe to call twice
-with the same value. The `unit_loaded` event must occur before a setting can
-affect USB descriptors; that boot ordering has not yet been measured (§5).
-Writes run from the storage task, after edits when the sequencer is stopped
-and before stock SYNC/SAVE/project-change jobs. They must not race CAPTURE or
-recording CF writes. The exact schedule is a gate, not an assumption.
+The core loads outside the audio ISR. After every project or UNIT load, it
+validates known values, supplies defaults for missing or invalid values, and
+invokes each applicable callback once with the resulting value. It invokes
+callbacks again after edits. A callback must be safe to receive the same
+value on repeated loads. The `unit_loaded` event must occur before a
+setting can affect USB descriptors; that boot ordering has not yet been
+measured (§5).
 
-### 3.3 One shared container per scope
+Automatic OTX writes run from the storage task, never the UI task. The UI
+must not acquire or wait on `FS_MUTEX` for OTX. Edits are coalesced into one
+bounded job after roughly two seconds idle (initial target to tune on MKI),
+including when playback is running. Automatic OTX writes are deferred while
+any stock recorder, CAPTURE or tape capture is writing; the dirty state stays
+pending until storage can safely resume. Writes are serialized with stock
+project and other CF writes. Explicit SAVE and project-switch behavior with
+pending edits still needs a rule and hardware test.
 
-- `<set>/<project>/project.otx`: one file for **all installed and absent
-  modules' PROJECT meta-settings** in that project.
-- `/unit.otx` at the inserted CF card root: one optional file for **all
-  modules' UNIT meta-settings**, shared across projects on that card. This
-  does not follow the physical Octatrack when the card changes. With no
-  readable card, use defaults; whether the USB preference needs different
-  persistence remains open.
+MKI evidence from OLT01/OLT02 (26 Sep 2026): individual CF writes reached
+about 1.2 s under STATIC playback; with CAPTURE active, UI stalls reached
+1.215 s and followed a 1.206 s write. UI-side waiting on `FS_MUTEX` is a
+strong hypothesis, not a proven trace. OLT01 measured 1.4–2.1 MB/s while
+STATIC tracks read. These are storage-system measurements, not OTX write
+latencies. They rule out UI-task file access as an acceptable OTX design and
+make a playback/CAPTURE timing gate mandatory.
 
-Both files use the same proposed binary TLV format. Integers are big-endian
-on the ColdFire. A PROJECT file contains two WORK snapshots (A/B) and two
-STORED snapshots (A/B); a UNIT file contains two snapshots (A/B). **Each
-snapshot is a complete shared container**, not one slot per module. A save
-writes the older slot of its kind, leaving the other valid slot intact. A
-reader chooses the valid slot with the highest generation. `WORK` means the
-current project state; SAVE PROJECT updates `STORED`; RELOAD PROJECT applies
-`STORED`. Their exact transitions must be matched to stock behavior (§5).
+### 3.3 Shared PROJECT state as `.work` / `.strd`
 
-The proposed file is preallocated once and overwritten in whole 512-byte
-sectors, without rename or delete during a normal save. This method, its
-capacity, and its behavior under a power cut are **unproven** on the MKI.
-Each slot has a fixed `slot_bytes`; total file size is `4 × slot_bytes` for
-PROJECT and `2 × slot_bytes` for UNIT. A slot starts with a bounded header:
+- `<set>/<project>/otx.work`: the working meta-settings of **all** modules,
+  including modules absent from the running firmware. Rewritten after edits
+  are coalesced and storage is available.
+- `<set>/<project>/otx.strd`: the saved state of **the same shared store**.
+  SAVE PROJECT writes it; RELOAD PROJECT loads it. These are not two module
+  stores and not a four-slot preallocated file.
+- One optional shared UNIT file at the inserted CF card root (working name
+  `unit.otx`): card-wide settings for all modules, with no `.strd` copy. The
+  persistence and recovery policy for a missing/unreadable card is open.
+
+Sam's stock-style write proposal is `open("w")`, write, close. Stock
+`project.work` uses the same primitive and accepts the same interrupted-write
+risk; this is not an atomic write guarantee. The observed OS open strings are
+`"r"`, `"w"` and `"a"`, without a visible `"r+"`. The former
+in-place A/B-slot plan depended on a write/read mode or seek behavior that
+had not been proven, so draft 2 drops the fixed slots, sector alignment,
+generation counters and `slot_bytes`. A power cut can truncate `otx.work`.
+If its CRC fails, load a valid `otx.strd` and visibly report the fallback;
+that reverts unsaved OTX edits. If neither copy is valid, do not silently
+write defaults over unreadable data. A genuinely new project with no OTX
+files is a distinct case and starts from declared defaults.
+
+The common record and TLV format remains binary, big-endian. The following
+is a **draft byte layout** for a neutral reference tool and test corpus:
 
 ```text
-Slot header (32 bytes, proposed)
+File header (24 bytes)
   0   char[4]  "OTX1"
-  4   u16      header size = 32
-  6   u8       format major = 1       7  u8  format minor = 0
+  4   u16      header size = 24
+  6   u8       container major = 1     7 u8 container minor = 0
   8   u8       kind (0 WORK, 1 STORED, 2 UNIT)
-  9   u8       flags = 0              10 u16 reserved = 0
-  12  u32      generation
-  16  u32      used bytes (header + records, CRC excluded)
-  20  u32      slot_bytes            24 u32 record count
-  28  u32      reserved = 0
-Records, bounded by `used`; one record per (module id, scope)
-  0   u8       full id length (1..63)   1 u8 flags
-  2   u16      schema major            4 u16 schema minor
+  9   u8       flags (zero when new)   10 u16 reserved = 0
+  12  u32      total file bytes, including the trailing CRC
+  16  u32      record count           20 u32 reserved = 0
+Records, exactly `record count` times
+  0   u8       full id length (1..63)  1 u8 flags
+  2   u16      schema major           4 u16 schema minor
   6   u16      reserved = 0
-  8   u32      payload length         12 u32 payload CRC-32
-  16  u32      record size (header + full id + payload + padding)
-  20  byte[]   full namespaced ASCII module id, payload, 0..3 padding bytes
-Then u32      slot CRC-32 (IEEE) over bytes 0 .. used-1
-Rest            zero padding to `slot_bytes`
+  8   u32      payload length        12 u32 payload CRC-32
+  16  u32      record size
+  20  byte[]   full namespaced ASCII id, payload, padding to 4 bytes
+Then u32      file CRC-32 (IEEE) over all preceding bytes
 ```
 
-The CRC words are big-endian. `used + 4 <= slot_bytes`; lengths and record
-counts must be checked before any allocation or callback. The **full** module
-id is stored in each record, never an eight-byte prefix. Duplicate ids in
-one snapshot invalidate those modules' records but do not erase their raw
-bytes or stop other modules loading. A newer container major or an invalid
-snapshot is not rewritten automatically; fall back to the other valid slot.
+A reader advances by **record size**, not by payload length alone. It must
+also require `record size == align4(20 + id length + payload length)` and
+bounds-check all three lengths before reading or allocating. A disagreement
+invalidates that record for application but preserves its raw bytes if its
+record-size boundary is safe. If that boundary cannot be trusted, or if the
+file CRC fails, the entire file is invalid and the reader tries the saved
+copy.
+The full id is stored, never a truncated prefix. Duplicate ids retain every
+copy unchanged, but none is applied. A newer file/container major is not
+rewritten by an older reader.
 
-A known module's payload is a sequence of typed TLVs: stable `u16` key,
-`u16` flags, `u32` length and value padded to four bytes. `Binary`/`Option`
-values are one byte (at most 256 options); `Number` is a big-endian signed
-16-bit value; bounded configuration blobs use their declared length. The
-module record CRC isolates payload damage from other records. Unknown module
-records and unknown inner TLVs are copied **byte for byte**, including their
-padding. The reference tool and neutral test corpus (§5) must make that
-promise executable, not merely descriptive.
+A known module's payload is a sequence of typed TLVs:
 
-If a future schema needs more space than the fixed slot allows, saving must
-stop with a visible error while the previous snapshot stays readable. A
-second-file migration and any deletion of an old file need their own tested
-protocol; they are not part of draft 1. No module may solve the capacity
-problem by writing a private `.otx` settings file.
+```text
+  0   u16      stable key             2 u8  type
+  3   u8       reserved = 0           4 u16 flags
+  6   u16      reserved = 0           8 u32 value length
+  12  byte[]   value, padding to 4 bytes
+```
 
-### 3.4 One generated MODULES menu
+The reader advances by `align4(12 + value length)`. Proposed type table:
+`1 Binary` (one byte, 0/1), `2 Option` (one-byte index), `3 Number`
+(signed 16-bit big-endian), `4 Blob` (declared maximum in bytes). A module
+manifest gives each Blob and each complete record a finite byte maximum;
+the build checks the declared maxima. The global file ceiling and these
+numbers need agreement before any on-card writer ships. A key cannot change
+type: adding a new interpretation means a new key or a new schema major.
+
+Record flags are `u8`; TLV flags are `u16`. New packets write zero. Within
+major 1 the flags carry no semantics and are ignored when applying known
+values, but their existing bytes are retained on rewrite. A future meaning
+must use a new major, type or key rather than silently repurposing these
+ignored bits. Unknown packets, unknown keys and their padding are retained
+**byte for byte**. A type mismatch on a known key takes its default while
+preserving the original packet for diagnosis.
+
+A reference tool must verify both CRC levels, length arithmetic, unknown
+record/TLV round-trips, torn `otx.work` fallback, missing `otx.strd`, duplicate
+ids, newer minor and unsupported major. A valid saved copy is recovery, not
+a promise of atomic `"w"` writes. The stock-like write path and copying of
+both OTX project files still need emulator and MKI tests.
+
+### 3.4 One generated settings menu with GENERAL
 
 The build emits one root category beside PROJECT / SYSTEM / CONTROL / MIDI
-only when a selected module declares settings. The working name is
-**MODULES**. Each present module gets a heading and rows generated from its
-manifest; an absent module's stored record gets **no row**, while remaining
-in the file:
+when OTX is enabled. **MODULES** is only a working label; the name needs
+agreement. This category always contains a
+default **GENERAL** module supplied by the core at the same level as other
+modules, and shows only optional modules
+present in the image; absent modules' bytes remain in OTX with no menu row.
+Authors can propose a setting for GENERAL when it truly concerns the whole
+firmware. Shared GENERAL keys, type, meaning and defaults are maintained in
+one core registry and reviewed together; a module cannot independently claim
+or redefine them. Module-specific settings retain their module namespace.
+The stable identifier for GENERAL itself needs agreement before files ship.
 
-```text
-USB AUDIO                 <- heading, only in images with USB AUDIO
- PROFILE      LIGHT
-OCTALAB
- SC PITCH     [X]
- FILL OVERWR  [ ]
-```
+Each present module contributes settings under its own stable namespaced id
+and may declare parameter groups. For example,
+`org.octalab.core > GENERATORS > ...` could be displayed with the shorter
+label `OCTALAB`. The namespace owns the group and prevents collisions; a
+module without groups shows its settings directly. No module gets its own
+meta-settings root category.
 
-`[ENTER]` advances an Option; Binary draws `[ ]` / `[X]`. When requested and
-effective values differ, the row shows both (for example `FULL>OFF`). The
-multi-value widget and maximum scrollable row count still need emulator and
-MKI tests. No module has its own meta-settings root category.
+As an **example** of a cross-module setting, GENERAL could hold a UNIT
+`Option` choosing a scrolling list with module separators or an index of
+module submenus. This is not yet a decision to implement both layouts or a
+fixed `GROUPING` key. If adopted, the choice must remain reachable from every
+view, have a safe default when UNIT cannot be read, and leave module ids,
+keys and values unchanged. All settings, including GENERAL, must be reachable
+with arrows alone. The exact row structure, editing gestures, page-id limits,
+scrolling and back-navigation need emulator and MKI checks.
+
+In the existing stock menu widget, a row inside a pane cannot descend into
+another submenu, and no free page id is known
+([MAINMENU.md](https://github.com/sambanks/octabam/blob/main/docs/firmware/MAINMENU.md) §5). A different UI mechanism would
+need proof. A flat 26-row OCTALAB
+category was used on the MKI in OLT02 with arrow navigation.
 
 ### 3.5 Creative files remain entirely module-owned
 
@@ -419,40 +494,46 @@ capability it actually implements and shows requested versus effective.
 
 ## 5. What must be agreed and measured
 
-The **shared container and module-owned creative files are the design rule**.
-The open choices concern its safe encoding and integration:
+The **shared store and module-owned creative files are the design rule**. The
+following details are open before implementation:
 
-1. Agree with other firmware authors on stable namespaced module ids, the
-   `.OTX` name, the example header and the neutral test corpus. A firmware
-   that does not implement the preservation contract cannot claim `.OTX`
-   compatibility.
-2. Implement `tools/hw/otx.py` on the computer: read, write, check and dump.
-   Test known and absent modules, unsupported schema major, unknown inner
-   key, duplicate id, invalid record CRC, torn slot, capacity overflow and
-   **byte-identical unknown-record preservation after a known setting edit**.
-3. Prove stock FS seek and fixed-sector overwrite in the emulator, then on a
-   disposable MKI card. Test power cuts with both slots, exact file size,
-   and that an overflow never rewrites the only valid snapshot.
-4. Implement the shared core/menu in the emulator. Verify that project
-   load, SAVE, RELOAD, change and rollback apply only the known blocks and
-   leave absent-module records untouched. Match WORK/STORED timing to the
-   stock project model.
+1. Use the agreed `otx.work` / `otx.strd` project names and OTX format name.
+   Ratify the UNIT filename, recovery policy, and maximum file, record and
+   Blob sizes; publish a neutral byte corpus.
+2. Implement `tools/hw/otx.py` on the computer: create, read, validate, dump
+   and round-trip. Cover absent modules, newer minor, unsupported major,
+   unknown type/key/flags, duplicate ids, bad lengths, CRC failures, torn
+   `otx.work`, absent `otx.strd`, and byte-identical opaque preservation after
+   a known setting edit.
+3. Trace stock `"w"` / close and project SAVE/RELOAD timing in the emulator,
+   then test the OTX pair on a disposable MKI project, including playback and
+   CAPTURE while edits save. A valid `otx.strd` fallback must be visible; no
+   valid fallback must never become a silent overwrite of damaged data.
+4. Implement one shared core with GENERAL and module-owned groups. Test
+   arrow-only navigation, namespaces, per-module parameter groups, scrolling,
+   row count, back-navigation, LOAD ERR and the deliberate `REPLACE SETTINGS`
+   action on MKI. If a menu-presentation setting is adopted, test each offered
+   view and switching between them before shipping it.
 5. Test stock SAVE TO NEW, COLLECT SAMPLES, EXPORT TO SET, PURGE and project
-   copy. Determine whether they carry `project.otx`; if they do not, the
-   shared core must copy the whole container, including unknown blocks.
-6. Decide whether card-wide `unit.otx` is sufficient for UNIT settings or
-   whether they must survive a CF card swap. Prove UNIT load and any USB
-   profile application finish before the host reads descriptors. Until that
-   point `NEXT_CONNECT` is only a requested behavior.
-7. Test latency with several module records and the MKI's CF workload,
-   including CAPTURE. Never perform `.OTX` I/O from an audio ISR.
+   copy. If they omit OTX, the shared core must copy both project files,
+   retaining unknown module records byte-identically.
+6. Decide UNIT recovery and card-swap behavior. Prove UNIT load and any USB
+   profile application finish before the host reads descriptors. Until then
+   `NEXT_CONNECT` is only a requested behavior.
+7. Keep all OTX I/O out of audio ISRs and measure latency with several module
+   records and CAPTURE under extreme CF load.
+8. Choose the user-facing name of the special settings menu. **MODULES** is
+   only a working label. Decide the menu structure with authors and MKI tests;
+   a presentation-choice setting is an example, not an agreed requirement.
+   The existing stock pane cannot descend to a module submenu; prototype a
+   different mechanism before promising one.
 
 ---
 
 ## 6. What a module author does
 
 - Declare a stable namespaced id, keys, defaults, scope and apply policy for
-  **meta-settings**. Do not create a private `.otx` file, menu root or save
+  **meta-settings**. Do not create a private OTX settings file, menu root or save
   hook for those settings.
 - Keep grooves, Kits, presets and other transferable personal content in
   files whose format the module alone chooses and maintains. The shared
@@ -463,7 +544,7 @@ The open choices concern its safe encoding and integration:
   image, editing another module's setting and saving must preserve this
   module's complete record byte for byte.
 
-## 7. Later, not in draft 1
+## 7. Later, not in draft 2
 
 Stable (module, key) addresses make a settings map possible, like norns'
 `.pmap` for MIDI mappings: a MIDI CC or one of our USB vendor requests could
