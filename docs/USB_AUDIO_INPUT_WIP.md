@@ -5,6 +5,9 @@ This is a research handoff, **not an implemented or hardware-tested USB input
 feature**. Confidence labels distinguish a DSP emulator observation from a
 working path on the unit.
 
+For the output-only baseline and MKI responsiveness report, see
+[USB AUDIO LIGHT WIP](USB_AUDIO_LIGHT_WIP.md).
+
 | Status | Finding |
 |---|---|
 | **CONFIRMED in DSP emulation only** | Four independent two-second tone probes on the `OLB91` image (`out/olb91.os`) supplied 440, 660, 880 and 1100 Hz to the A, B, C and D ESAI RX callbacks respectively. With test routing, each tone reached MAIN (`--expect-tone`, detection ratio 0.950 in each run). This demonstrates a DSP receive path for samples presented before ESAI RX consumption. It does **not** demonstrate transfer from USB or the ColdFire to that point. |
