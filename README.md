@@ -340,7 +340,9 @@ publishes only what they still mark open.
 
 ---
 
-**MIT licensed** (this repository's text and images).
+© 2026 nordseele. This repository's text and images are licensed under
+[CC BY-NC-SA 4.0](LICENSE): credit octalab, non-commercial use, share
+adaptations alike. Versions published before 27 September 2026 were MIT.
 
 *Independent, unofficial, educational. Not endorsed by, supported by, or
 affiliated with Elektron. "Elektron" and "Octatrack" are trademarks of Elektron
