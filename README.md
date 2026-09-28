@@ -59,19 +59,10 @@ octalab's full-screen views and back.
 - **MAIN is home.** The stock Octatrack is untouched there; the arrows keep
   their stock meaning on every stock page that uses them.
 - **Inside a view, [LEFT] / [RIGHT] may later page through that view's own
-  modes.** The views would then form a small grid, and each screen would show
-  a **minimap** of where you are:
+  modes.**
 
-```
-  ┌──────────────────────────────┐
-  │ CAPTURE · CHOP        ▫▪▫    │  ◂ minimap: row = view,
-  │                       ▫▫▫    │           column = mode
-  │                       ▫▫▫    │
-  └──────────────────────────────┘
-```
-
-The order of the views and the minimap's look are being drawn now; the next
-build reserves the view slots, empty ones included.
+The order of the views is being drawn now; the next build reserves the view
+slots, empty ones included.
 
 ### GRID PAGES: the stack around grid recording
 
@@ -131,9 +122,13 @@ and turn the good ones into a kit or a sliced chain without leaving the
 pattern. CAPTURE borrows the selected track's recorder and records from the
 external inputs or from a track.
 
-![CAPTURE during recording (mock-up)](docs/img/capture_mockup.png)
+![CAPTURE's RECORD page in CHOP mode: source A+B, gain, monitoring and threshold](docs/img/capture_chop.png)
 
-*The CAPTURE screen, from the design mock-up (128 × 64, enlarged 6×).*
+![CAPTURE while recording: live VU meters and take length](docs/img/capture_recording.png)
+
+![CAPTURE's MAIN page: a recorded pad's waveform with its trim markers](docs/img/capture_main_trim.png)
+
+*The CAPTURE screens as the firmware draws them (128 × 64, enlarged 6×).*
 
 Three ways to fill the pads:
 
@@ -293,8 +288,7 @@ Changes made by these functions survive a power cycle.
 Directions, not a roadmap. Each one is tried on the unit and kept only if it
 earns its place.
 
-- **VIEWS**: the view slots, then TAPE as a view, then left/right modes and
-  the minimap.
+- **VIEWS**: the view slots, then TAPE as a view, then left/right modes.
 - **MODIFIER** and more **GENERATOR** modes (MIDI tracks, trig probability on
   generated trigs).
 - **Controlled randomness**: variations around the current values rather than
