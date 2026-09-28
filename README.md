@@ -174,10 +174,9 @@ two generators spread their pulses evenly over the track's length, each with
 its own rotation. A boolean operator combines them, and the result can be
 rotated again.
 
-![The GENERATOR page](docs/img/generator_page.png)
+<img src="docs/img/generator_photo.jpg" width="400" alt="The GENERATOR page on an Octatrack MKI">
 
-*Drawn by the Octatrack's own firmware (emulator capture): track 2 in EUCL,
-5 pulses XOR 3 pulses rotated +2, the whole rotated −1.*
+*On the unit: track 2 in EUCL, 6 pulses SUB 13 pulses, both rotated +6.*
 
 - **LEVEL** chooses the mode (OFF, EUCL, more to come). The six encoders sit
   where their cells are: A/B pulses, C operator (OR, XOR, AND, SUB), D/E the
@@ -196,7 +195,7 @@ rotated again.
 the timing and dynamics of a real performance, laid onto the trigs you already
 placed, so that a straight pattern takes a drummer's feel.
 
-![A track's GROOVE page](docs/img/groove_page.png)
+<img src="docs/img/groove_photo.jpg" width="400" alt="A track's GROOVE page on an Octatrack MKI">
 
 **On the pattern**, it only uses the stock sequencer:
 
@@ -217,10 +216,10 @@ longer groove the pattern starts on. You hear every change as you turn.
 Each bank has **eight groove slots**, like the sample slots. Open the pool
 with **[BANK] + [ENTER]**, or with [BANK] from a GROOVE page.
 
-![The groove pool of a bank](docs/img/groove_pool.png)
+<img src="docs/img/groove_pool_photo.jpg" width="400" alt="The groove pool of a bank on an Octatrack MKI">
 
-*Bank A's pool, drawn by the firmware (emulator capture): slot 1 drives tracks
-1 and 3, slot 2 drives track 2, and the bank's feel is pushed to 120 %.*
+*Bank A's pool on the unit: five grooves loaded, the bank's feel pushed to
+135 %.*
 
 - **Change a slot and every track on it follows**, in every pattern of the
   bank: one groove change moves the whole kit.
@@ -254,7 +253,7 @@ first, empty; its modifiers are still being designed.
 **Tap [FUNCTION] twice, quickly**, from almost any screen, and a list of
 one-gesture functions opens over whatever you were doing.
 
-![The octalab menu](docs/img/octalab_menu.png)
+<img src="docs/img/octalab_menu_photo.jpg" width="400" alt="The octalab menu on an Octatrack MKI">
 
 One row per subject, one action shown per row. **LEVEL** or the arrows move
 between rows, **[LEFT] / [RIGHT]** choose the row's action (`>` means there is
