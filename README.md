@@ -122,13 +122,11 @@ and turn the good ones into a kit or a sliced chain without leaving the
 pattern. CAPTURE borrows the selected track's recorder and records from the
 external inputs or from a track.
 
-![CAPTURE's RECORD page in CHOP mode: source A+B, gain, monitoring and threshold](docs/img/capture_chop.png)
+<img src="docs/img/capture_photo_main.jpg" width="400" alt="CAPTURE's MAIN page on an Octatrack MKI: a recorded pad's waveform">
+<img src="docs/img/capture_photo_chop.jpg" width="400" alt="CAPTURE recording in CHOP mode: SLICE ADDED after a cut">
+<img src="docs/img/capture_photo_hold.jpg" width="400" alt="CAPTURE in HOLD mode waiting for the threshold">
 
-![CAPTURE while recording: live VU meters and take length](docs/img/capture_recording.png)
-
-![CAPTURE's MAIN page: a recorded pad's waveform with its trim markers](docs/img/capture_main_trim.png)
-
-*The CAPTURE screens as the firmware draws them (128 × 64, enlarged 6×).*
+*CAPTURE on the unit: a pad's waveform, CHOP recording, HOLD waiting for the threshold.*
 
 Three ways to fill the pads:
 
