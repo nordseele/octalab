@@ -27,12 +27,12 @@ to keep, edit or throw away. No new effects, no new synthesis.
 
 | when | |
 |---|---|
-| ~8 Sep 2026 | **Randomisation**: one-gesture functions that fill the sample pool, randomise LFOs, effects, scenes and locks |
-| ~13 Sep | **GROOVE and the groove pool**: the feel of a real performance laid onto your trigs |
-| ~17 Sep | **CAPTURE**, an instant sampler on the trig keys |
-| ~24 Sep | **Direct to CF**: recording straight to the card while the machine plays, and playing it back beside the eight tracks |
-| ~29 Sep | **TAPE**, a meta-recorder that keeps everything you play |
-| 1 Oct | **OType** and **ot1** |
+| early September 2026 | **Randomisation**: one-gesture functions that fill the sample pool, randomise LFOs, effects, scenes and locks |
+| September, 2nd week | **GROOVE and the groove pool**: the feel of a real performance laid onto your trigs |
+| September, 3rd week | **CAPTURE**, an instant sampler on the trig keys |
+| September, 4th week | **Direct to CF**: recording straight to the card while the machine plays, and playing it back beside the eight tracks |
+| end of September | **TAPE**, a meta-recorder that keeps everything you play |
+| October | **OType** and **ot1** |
 
 ### ot1 and OType
 
