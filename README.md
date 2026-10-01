@@ -25,14 +25,25 @@ to keep, edit or throw away. No new effects, no new synthesis.
 
 ## Where octalab stands
 
-| step | |
+| when | |
 |---|---|
-| 1 | **Randomisation**: one-gesture functions that fill the sample pool, randomise LFOs, effects, scenes and locks |
-| 2 | **GROOVE and the groove pool**: the feel of a real performance laid onto your trigs |
-| 3 | **CAPTURE**, an instant sampler on the trig keys |
-| 4 | **Direct to CF**: recording straight to the card while the machine plays, and playing it back beside the eight tracks |
-| 5 | **TAPE**, a meta-recorder that keeps everything you play |
-| 6 | **[OType](https://nordseele.github.io/otype-docs/)**, a scripting language, and **[ot1](https://github.com/nordseele/ot1)**, an independent custom firmware built around it: these workflow and screen changes are too many to fit as one more module in a remix. A very personal project for now, released once OType is mature |
+| ~8 Sep 2026 | **Randomisation**: one-gesture functions that fill the sample pool, randomise LFOs, effects, scenes and locks |
+| ~13 Sep | **GROOVE and the groove pool**: the feel of a real performance laid onto your trigs |
+| ~17 Sep | **CAPTURE**, an instant sampler on the trig keys |
+| ~24 Sep | **Direct to CF**: recording straight to the card while the machine plays, and playing it back beside the eight tracks |
+| ~29 Sep | **TAPE**, a meta-recorder that keeps everything you play |
+| 1 Oct | **OType** and **ot1** |
+
+### ot1 and OType
+
+The workflow and screen changes octalab explored are too many to fit as one
+more module in a remix. They are heading into
+**[ot1](https://github.com/nordseele/ot1)**, an independent custom firmware:
+fixed rather than remixed, and built around
+**[OType](https://nordseele.github.io/otype-docs/)**, a small scripting
+language in the spirit of monome Teletype, so that users can add their own
+functions and shape ot1 to the way they work. A very personal project for
+now, released once OType is mature.
 
 octalab itself stays a **research laboratory**. Sharing modules with octabam
 is something it fully agrees with: what can travel as an octabam module will,
