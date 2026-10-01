@@ -7,7 +7,7 @@
 ▀▄▄▄▀ ▀▄▄▄▀  ▀▄▄▀ ▀▄▄▄█  ▄█▄  ▀▄▄▄█ █▄▄▄▀
 ```
 
-`octalab │ research lab │ octatrack firmware │ 2026`
+`octalab │ ot re and research │ 2026`
 
 **A research laboratory for the Elektron Octatrack's firmware (OS 1.40C).** For three
 weeks octalab has researched what can be added to the Octatrack's own
