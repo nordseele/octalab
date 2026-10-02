@@ -16,7 +16,7 @@ other projects that opened up its reverse engineering and custom firmware
 ([octamax](https://github.com/mxldyn/octamax),
 [ems-octakit](https://github.com/emuyia/ems-octakit),
 [octa-bt-pt](https://github.com/bryantysinger/octa-bt-pt)). It started with
-functions like **GROOVE** and a handful of **randomisation** tools, because
+additions like **GROOVE**, Generators (Euclidean sequencer, Grids), and a handful of **randomisation** tools, because
 that is the project: **collage, randomness and help for the creative
 process** — a starting point you would not have chosen, in one gesture, yours
 to keep, edit or throw away. No new effects, no new synthesis.
@@ -28,7 +28,7 @@ to keep, edit or throw away. No new effects, no new synthesis.
 | when | |
 |---|---|
 | early September 2026 | **Randomisation**: one-gesture functions that fill the sample pool, randomise LFOs, effects, scenes and locks |
-| September, 2nd week | **GROOVE and the groove pool**: the feel of a real performance laid onto your trigs |
+| September, 2nd week | **GROOVE and the groove pool**, **Generators (Double trig Euclidean sequencer, MI Grids)**.
 | September, 3rd week | **CAPTURE**, an instant sampler on the trig keys |
 | end of September | **Direct to CF** and **TAPE**: recording straight to the card while the machine plays, a meta-recorder that keeps everything you play, and independent playback beside the eight tracks |
 | October | **OType** and **ot1** |
@@ -44,7 +44,7 @@ language in the spirit of monome Teletype, so that users can add their own
 functions and shape ot1 to the way they work. A very personal project for
 now, released once OType is mature.
 
-octalab itself stays a **research laboratory**. Sharing modules with octabam
+octalab itself stays a **research laboratory**, an "atelier/workshop". Sharing modules with octabam
 is something it fully agrees with: what can travel as an octabam module will,
 and octabam modules will run on ot1.
 
