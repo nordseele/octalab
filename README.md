@@ -42,7 +42,7 @@ language in the spirit of monome Teletype, so that users can add their own
 functions and shape ot1 to the way they work. A very personal project for
 now, released once OType is mature.
 
-Octalab itself stays a research laboratory, an "atelier/ workshop". Some features will be made available as modules compatible with Octabam. What can travel as an octabam module will, and octabam modules will run on ot1.
+Octalab itself stays an *atelier*, a workshop. Some features will be made available as modules compatible with Octabam. What can travel as an octabam module will, and octabam modules will run on ot1.
 
 ## What octalab has studied
 
@@ -114,9 +114,11 @@ in the project folder, so a good moment is never lost to not having pressed
 REC. The target is **four channels at once**: a stereo pair on tape while
 CAPTURE records another pair, with no freeze and no dropout.
 
+<img src="docs/img/tape_photo.jpg" width="400" alt="TAPE playing a recording back from the card on an Octatrack MKI">
+
 **State:** diagnostic test builds have recorded MAIN to the card on the MKI.
 Reliable long recording while CAPTURE writes too is not reached yet. The TAPE
-view does not exist yet.
+view (record, open a tape, play it back) runs in test builds on the MKI.
 
 
 ### GROOVE and the groove pool
