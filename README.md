@@ -40,7 +40,8 @@ fixed rather than remixed, and built around
 **[OType](https://nordseele.github.io/otype-docs/)**, a small scripting
 language in the spirit of monome Teletype, so that users can add their own
 functions and shape ot1 to the way they work. A very personal project for
-now, released once OType is mature.
+now, released once OType is mature: see where it stands on the
+**[OType roadmap](https://nordseele.github.io/otype-docs/roadmap.html)**.
 
 Octalab itself stays an *atelier*, a workshop. Some features will be made available as modules compatible with Octabam. What can travel as an octabam module will, and octabam modules will run on ot1.
 
