@@ -7,19 +7,16 @@
 ▀▄▄▄▀ ▀▄▄▄▀  ▀▄▄▀ ▀▄▄▄█  ▄█▄  ▀▄▄▄█ █▄▄▄▀
 ```
 
-`octalab │ ot re and research │ 2026`
+`octalab │ ot explorations │ 2026`
 
-**A research laboratory for the Elektron Octatrack's firmware (OS 1.40C).** For three
-weeks octalab has researched what can be added to the Octatrack's own
-firmware, building on [octabam](https://github.com/sambanks/octabam) and the
-other projects that opened up its reverse engineering and custom firmware
-([octamax](https://github.com/mxldyn/octamax),
-[ems-octakit](https://github.com/emuyia/ems-octakit),
-[octa-bt-pt](https://github.com/bryantysinger/octa-bt-pt)). It started with
-additions like **GROOVE**, Generators (Euclidean sequencer, Grids), and a handful of **randomisation** tools, because
-that is the project: **collage, randomness and help for the creative
-process** — a starting point you would not have chosen, in one gesture, yours
-to keep, edit or throw away. No new effects, no new synthesis.
+For four weeks, octalab has explored what can be added to the Octatrack's native firmware, building on [octabam](https://github.com/sambanks/octabam) and other projects that paved the way for its reverse engineering and custom firmware ([octamax](https://github.com/mxldyn/octamax), [ems-octakit](https://github.com/emuyia/ems-octakit), [octa-bt-pt](https://github.com/bryantysinger/octa-bt-pt)). 
+
+Initial additions included **Groove**, **Generators** (Euclidean sequencer, Grids), and a suite of randomization tools. The project is driven by a philosophy of collage and unpredictability to assist the creative process. The goal is to provide a starting point you wouldn't have naturally chosen, all in one gesture.
+
+The project then focused on improving and streamlining the sampling workflow on the Octatrack. This first led to **Capture**, an instant sampler inspired by Koala Sampler, followed by **Tape**, a meta-recorder inspired by Norns.
+
+Throughout development, a core principle was to avoid overcomplicating an instrument already known for its steep learning curve. The newly implemented shortcuts and pages integrate seamlessly into the Octatrack's legacy OS. Drawing inspiration from devices with state-of-the-art UX, such as Orthogonal Devices' ER-301, these additions naturally paved the way for a full-fledged interface project. This led to **ot1**: an independent custom firmware built upon octalab's technical and UX discoveries, centered around a brand-new scripting language developed specifically for the OT.
+
 
 <img src="docs/img/octalab_menu_photo.jpg" width="400" alt="The octalab function menu on an Octatrack MKI">
 
@@ -31,9 +28,10 @@ to keep, edit or throw away. No new effects, no new synthesis.
 | September, 2nd week | **GROOVE and the groove pool**, **Generators (Double trig Euclidean sequencer, MI Grids)**.
 | September, 3rd week | **CAPTURE**, an instant sampler on the trig keys |
 | end of September | **Direct to CF** and **TAPE**: recording straight to the card while the machine plays, a meta-recorder that keeps everything you play, and independent playback beside the eight tracks |
-| October | **OType** and **ot1** |
+| October | **OType** scripting language for OT and **ot1** cfw.|
 
-### ot1 and OType
+
+### A quick note on OT1 and OType
 
 The workflow and screen changes octalab explored are too many to fit as one
 more module in a remix. They are heading into
@@ -44,9 +42,7 @@ language in the spirit of monome Teletype, so that users can add their own
 functions and shape ot1 to the way they work. A very personal project for
 now, released once OType is mature.
 
-octalab itself stays a **research laboratory**, an "atelier/workshop". Sharing modules with octabam
-is something it fully agrees with: what can travel as an octabam module will,
-and octabam modules will run on ot1.
+Octalab itself stays a research laboratory, an "atelier/ workshop". Some features will be made available as modules compatible with Octabam. What can travel as an octabam module will, and octabam modules will run on ot1.
 
 ## What octalab has studied
 
@@ -76,10 +72,10 @@ machine plays**, and plays it back **on top of the eight tracks**.
 
 ### CAPTURE
 
-**A sampling notepad.** Record sounds onto the trig keys, play them at once,
+**A sampling notepad.** The idea here is to bring workflows inspired by MPC, Koala Sampler, OP-1 to Octatrack. Record sounds onto the trig keys, play them at once,
 and turn the good ones into a kit or a sliced chain without leaving the
 pattern. CAPTURE borrows the selected track's recorder and records from the
-external inputs or from a track, from almost any screen.
+external inputs or from a track, from almost any screen. 
 
 <img src="docs/img/capture_photo_main.jpg" width="400" alt="CAPTURE's MAIN page on an Octatrack MKI: a recorded pad's waveform">
 <img src="docs/img/capture_photo_chop.jpg" width="400" alt="CAPTURE recording in CHOP mode: SLICE ADDED after a cut">
@@ -87,9 +83,6 @@ external inputs or from a track, from almost any screen.
 
 *CAPTURE on the unit: a pad's waveform, CHOP recording, HOLD waiting for the threshold.*
 
-<img src="docs/img/capture_recording.png" width="300" alt="CAPTURE recording, screen capture"> <img src="docs/img/capture_chop.png" width="300" alt="CAPTURE in CHOP mode, screen capture"> <img src="docs/img/capture_main_trim.png" width="300" alt="Trimming a pad in CAPTURE, screen capture">
-
-*The same screens, captured during development.*
 
 Three ways to fill the pads:
 
@@ -134,7 +127,7 @@ placed, so that a straight pattern takes a drummer's feel.
 
 <img src="docs/img/groove_photo.jpg" width="400" alt="A track's GROOVE page on an Octatrack MKI">
 
-<img src="docs/img/groove_page.png" width="300" alt="A track's GROOVE page, screen capture"> <img src="docs/img/groove_pool.png" width="300" alt="The groove pool, screen capture">
+
 
 **On the pattern**, it only uses the stock sequencer:
 
@@ -197,18 +190,17 @@ nothing that changes what an existing key already does.
 
 <img src="docs/img/octalab_menu.png" width="300" alt="The function menu, screen capture">
 
-### Also studied
+### Generators
 
 A euclidean **generator** page, an exploration of Mutable Instruments'
 **Grids**, non-destructive pattern **modifiers**, and a set of **views**
-around the main screen.
+around the main screen. All these generators will now use Otype.  
 
 <img src="docs/img/generator_photo.jpg" width="400" alt="The euclidean generator page on an Octatrack MKI">
-<img src="docs/img/grids_before_after.png" width="400" alt="A pattern before and after the Grids generator">
 
----
 
-## State of the project
+
+## Additional notes
 
 - **Machines:** built and tested on an Octatrack MKI running OS 1.40C. The
   MKII runs the same OS image but is untested.
