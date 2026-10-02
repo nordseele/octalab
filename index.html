@@ -1,0 +1,292 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>octalab</title>
+<meta name="description" content="octalab: explorations of the Elektron Octatrack's firmware.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,600;1,400&display=swap">
+<style>/* OType command reference — monochrome "OT screen" look. Inlined into the page by tools/cheatsheet.py.
+   Retune the look by editing ONLY the token blocks below (light, dark x2: the dark values appear twice,
+   once for "system is dark" and once for the toggle — keep the two identical). */
+:root {
+  --bg: #f4f4f2;        /* page background (and text inside inverted boxes) */
+  --text: #1a1a1a;      /* body text */
+  --strong: #000000;    /* strong ink: headings, keywords, numbers, inverted-box fill */
+  --muted: #6b6b6b;     /* secondary text: docs, strings, aliases */
+  --faint: #b0b0b0;     /* comments, step borders, heading and table rules */
+  --rule: #d0d0cc;      /* frames, separators between commands */
+  --font: "IBM Plex Mono", ui-monospace, Menlo, monospace;  /* the one font everywhere */
+  --fs-body: 14px;      /* body text size */
+  --fs-code: 13px;      /* code blocks and signatures */
+  --fs-small: 11px;     /* status bar, chips, headings, soft keys */
+  --px-mark: clamp(6px, 2vw, 11px);  /* size of one pixel of the wordmark */
+  --lh-body: 1.6;       /* body line height */
+  --gutter: clamp(16px, 4vw, 56px);     /* side margins */
+  --pad-inv: 0 7px;     /* padding of an inverted box */
+  --pad-cond: 0 3px;    /* padding of a trig-condition box */
+  --track: 0.06em;      /* letter-spacing of inverted boxes */
+  --step: 9px;          /* size of one sequencer step */
+  --step-gap: 5px;      /* space between steps */
+  --tempo: 0.5s;        /* playhead: time per step (see the JS, 500 ms) */
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0d0d0d; --text: #cfcfcf; --strong: #ffffff; --muted: #8c8c8c; --faint: #4d4d4d; --rule: #3a3a3a;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0d0d0d; --text: #cfcfcf; --strong: #ffffff; --muted: #8c8c8c; --faint: #4d4d4d; --rule: #3a3a3a;
+  color-scheme: dark;
+}
+
+/* ---- base ---- */
+* { box-sizing: border-box; border-radius: 0; box-shadow: none; text-shadow: none; }
+html, body { background: var(--bg); }
+body { margin: 0; color: var(--text); font: 300 var(--fs-body)/var(--lh-body) var(--font); -webkit-text-size-adjust: 100%; }
+::selection { background: var(--strong); color: var(--bg); }
+code, pre, input, button { font-family: var(--font); }
+code { font-weight: 300; }
+a { color: inherit; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; }
+a:hover { background: var(--strong); color: var(--bg); text-decoration: none; }
+:focus-visible { outline: 1px solid var(--strong); outline-offset: 2px; }
+.wrap { max-width: 1440px; margin: 0 auto; padding-inline: var(--gutter); padding-block: 24px 72px; }
+
+/* inverted box: the signature */
+.inv, h2 .hb { background: var(--strong); color: var(--bg); font-weight: 600; padding: var(--pad-inv); letter-spacing: var(--track); }
+
+/* ---- status bar ---- */
+.bar { display: flex; flex-wrap: wrap; border: 1px solid var(--rule); font-size: var(--fs-small); letter-spacing: var(--track); line-height: 1; }
+.bar .cell { padding: 6px 10px; border-right: 1px solid var(--rule); white-space: nowrap; }
+.bar .cell:last-child { border-right: 0; }
+.bar .cell.first { background: var(--strong); color: var(--bg); font-weight: 600; border-right-color: var(--strong); }
+.bar .end { margin-left: auto; border-left: 1px solid var(--rule); }
+#theme { background: none; color: var(--text); border: 0; border-left: 1px solid var(--rule); font: 300 var(--fs-small)/1 var(--font);
+  letter-spacing: var(--track); padding: 6px 10px; cursor: pointer; }
+#theme:hover { background: var(--strong); color: var(--bg); }
+
+/* ---- title ---- */
+header.top { margin: 40px 0 0; }
+h1 { margin: 0; font: inherit; }
+h1 .mark { display: block; height: calc(var(--px-mark) * 10); width: auto; color: var(--strong); }
+.tag { margin: 14px 0 18px; color: var(--muted); font-size: var(--fs-body); }
+.steps { display: flex; gap: var(--step-gap); padding: 3px; flex-wrap: wrap; }
+.steps i { display: block; width: var(--step); height: var(--step); border: 1px solid var(--faint); }
+.steps i.f { background: var(--muted); border-color: var(--muted); }
+.steps i.on { outline: 1px solid var(--strong); outline-offset: 2px; }
+
+/* ---- tools: filter and soft-key navigation ---- */
+.tools { display: flex; flex-wrap: wrap; gap: 14px 24px; align-items: flex-start; margin: 32px 0 0; padding-bottom: 20px; border-bottom: 1px solid var(--rule); }
+#q { font: 300 var(--fs-body) var(--font); padding: 5px 10px; border: 1px solid var(--rule); background: transparent; color: var(--text);
+  width: min(320px, 100%); -webkit-appearance: none; appearance: none; }
+#q::placeholder { color: var(--faint); }
+#q:focus { border-color: var(--strong); outline: 0; }
+nav.jump { display: flex; flex-wrap: wrap; gap: 6px; flex: 1 1 320px; font-size: var(--fs-small); letter-spacing: var(--track); text-transform: uppercase; }
+nav.jump a { display: block; padding: 4px 9px; border: 1px solid var(--rule); text-decoration: none; line-height: 1.3; }
+nav.jump a:hover, nav.jump a[aria-current] { background: var(--strong); color: var(--bg); border-color: var(--strong); font-weight: 600; }
+
+/* ---- headings ---- */
+h2 { display: flex; align-items: center; gap: 12px; margin: 0 0 16px; font-size: var(--fs-small); line-height: 1.5; text-transform: uppercase; font-weight: 600; }
+h2::after { content: ""; flex: 1; height: 1px; background: var(--faint); }
+h3 { margin: 22px 0 8px; font-size: var(--fs-small); font-weight: 400; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); }
+
+/* ---- intro ---- */
+.intro { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 360px), 1fr)); gap: 40px 64px; margin: 44px 0 0; }
+.intro > * { min-width: 0; }
+.howto p { margin: 0 0 14px; max-width: 64ch; }
+.howto pre { margin: 14px 0 18px; }
+.letters { border-bottom: 1px solid var(--faint); }
+.letters div { display: grid; grid-template-columns: 5.5em 1fr; gap: 12px; padding: 5px 0; border-top: 1px solid var(--faint); }
+.letters code { font-weight: 600; color: var(--strong); }
+.letters span { color: var(--muted); }
+
+/* ---- examples ---- */
+.examples { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr)); gap: 40px 56px; margin: 56px 0 64px; }
+.ex { margin: 0; min-width: 0; padding-top: 12px; border-top: 1px solid var(--faint); }
+.ex figcaption { font-size: var(--fs-small); letter-spacing: var(--track); text-transform: uppercase; color: var(--muted); margin-bottom: 12px; }
+pre { margin: 0; overflow-x: auto; font: 300 var(--fs-code)/1.7 var(--font); color: var(--text); }
+
+/* ---- reference sheet ---- */
+.sheet { column-width: 22rem; column-gap: 56px; }
+.cat { break-inside: avoid-column; margin-bottom: 44px; }
+.cat.big { break-inside: auto; }
+.op { break-inside: avoid; padding: 8px 0 9px; border-top: 1px solid var(--rule); }
+h2 + .op, h3 + .op { border-top: 0; padding-top: 0; }
+.sig { display: flex; justify-content: space-between; gap: 10px; align-items: baseline; }
+.sig code { font: 300 var(--fs-code) var(--font); color: var(--text); overflow-wrap: anywhere; }
+.sig code b { font-weight: 600; color: var(--strong); }
+.todo { font-size: 0.8em; font-weight: 400; color: var(--faint); margin-left: 5px; cursor: help; }
+.alias { font-size: 12px; color: var(--muted); white-space: nowrap; }
+.doc { font-size: 13px; color: var(--muted); line-height: 1.5; margin-top: 3px; }
+.chip { display: inline-block; font: 400 10px/1.4 var(--font); text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted);
+  border: 1px solid var(--faint); padding: 0 5px; margin-left: 4px; }
+.chip.warn { background: var(--strong); color: var(--bg); border-color: var(--strong); font-weight: 600; }
+.op.hit { outline: 1px solid var(--strong); outline-offset: 5px; }
+.empty { color: var(--muted); font-style: italic; }
+footer { margin-top: 48px; padding-top: 20px; border-top: 1px solid var(--rule); color: var(--muted); font-size: 12px; }
+footer p { max-width: 80ch; margin: 0 0 8px; }
+footer a { color: inherit; text-decoration: underline; text-underline-offset: 3px; }
+
+/* ---- syntax, without hue ---- */
+.c-kw { color: var(--strong); font-weight: 600; }                       /* keywords: def menu l if prob each trk steps … */
+.c-api { }                                                              /* API ops: normal text */
+.c-user { text-decoration: underline dotted 1px; text-underline-offset: 3px; }  /* user names: dotted underline */
+.c-str { font-style: italic; font-weight: 400; color: var(--muted); }   /* strings */
+.c-num { color: var(--strong); }                                        /* numbers */
+.c-com { color: var(--faint); }                                         /* comments */
+.c-var { }                                                              /* variables: normal text */
+.c-cond { background: var(--strong); color: var(--bg); font-weight: 600; padding: var(--pad-cond); }  /* trig conditions */
+.c-op { color: var(--muted); }                                          /* | and >> */
+
+@media (max-width: 520px) {
+  .bar .cell { padding: 6px 8px; }
+  .wrap { padding-block: 16px 56px; }
+}
+
+/* octalab page: added on top of cheatsheet.css (same tokens, same status bar, wordmark and
+   playhead). Layout: one column; each feature = text beside its photos on wide screens. */
+body { margin: 0; }
+.wrap { max-width: 1180px; }
+p { margin: 0 0 14px; }
+a { color: var(--strong); text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1px; }
+a:hover { background: var(--strong); color: var(--bg); text-decoration: none; }
+b { font-weight: 600; color: var(--strong); }
+code { font: 400 var(--fs-code) var(--font); color: var(--strong); }
+.txt { min-width: 0; max-width: 68ch; }
+ul { margin: 0 0 14px; padding: 0; list-style: none; }
+ul li { position: relative; padding-left: 20px; margin: 0 0 8px; }
+ul li::before { content: ""; position: absolute; left: 2px; top: 0.62em; width: 7px; height: 7px; background: var(--strong); }
+
+/* hero: the story beside the menu photo */
+.hero { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 400px); gap: 32px 56px; margin: 44px 0 0; align-items: start; }
+.hero .txt p:first-child { font-size: 16px; color: var(--strong); }
+
+/* photos: the unit's screen, in a thin frame */
+.shots { margin: 0; display: grid; gap: 12px; }
+.shots img { display: block; width: 100%; height: auto; border: 1px solid var(--rule); background: var(--rule); }
+.shots.many { grid-template-columns: repeat(auto-fit, minmax(min(100%, 180px), 1fr)); }
+.shots figcaption { font-size: 12px; color: var(--muted); line-height: 1.5; }
+.pics { display: grid; gap: 18px; min-width: 0; }
+
+/* soft keys: section jump */
+nav.jump { margin: 48px 0 0; padding: 18px 0; border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule); }
+
+/* sections and features */
+main section { margin: 56px 0 0; }
+.lead { max-width: none; }
+.lead > p, .lead > ul { max-width: 68ch; }
+.lead:empty { display: none; }
+.feature { display: grid; grid-template-columns: minmax(0, 1fr); gap: 20px 56px; padding: 26px 0 8px; border-top: 1px solid var(--faint); }
+.feature:first-of-type { border-top: 0; padding-top: 4px; }
+.feature.has-photos { grid-template-columns: minmax(0, 1fr) minmax(0, 360px); }
+.feature h3 { margin: 0 0 12px; font-size: 15px; font-weight: 600; letter-spacing: 0.04em; text-transform: none; color: var(--strong); }
+.feature h4 { margin: 20px 0 8px; font-size: var(--fs-small); font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--strong); }
+
+/* where octalab stands: one step per period */
+.timeline { list-style: none; margin: 8px 0 28px; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 190px), 1fr)); border: solid var(--rule); border-width: 1px 0 0 1px; }
+.timeline li { display: grid; grid-template-rows: auto auto 1fr; gap: 8px; padding: 14px 14px 16px; border-right: 1px solid var(--rule); border-bottom: 1px solid var(--rule); margin: 0; }
+.timeline li::before { content: none; }
+.timeline .led { width: 11px; height: 11px; background: var(--muted); border: 1px solid var(--muted); }
+.timeline .now .led { background: var(--strong); border-color: var(--strong); outline: 1px solid var(--strong); outline-offset: 2px; }
+.timeline .when { font-size: var(--fs-small); letter-spacing: var(--track); text-transform: uppercase; color: var(--muted); }
+.timeline .what { font-size: 13px; line-height: 1.5; }
+.timeline .now { background: color-mix(in srgb, var(--strong) 5%, transparent); }
+
+.tw { overflow-x: auto; }
+table { border-collapse: collapse; font-size: 13px; }
+th, td { text-align: left; padding: 6px 12px 6px 0; border-bottom: 1px solid var(--rule); vertical-align: top; }
+
+footer i { font-style: normal; }
+
+@media (max-width: 820px) {
+  .hero, .feature.has-photos { grid-template-columns: minmax(0, 1fr); }
+  .hero .pics { max-width: 420px; }
+}
+
+/* the wordmark is wider than OType's: let it shrink on a phone */
+header.top h1 .mark { width: min(100%, calc(var(--px-mark) * 41)); height: auto; }
+
+
+/* CAPTURE's wave: the recorder's display, same pixel as the wordmark */
+.wave { display: block; width: min(100%, 336px); height: auto; color: var(--strong); margin: 4px 0 20px; }
+.wave .mid { fill: var(--faint); }
+</style>
+</head>
+<body>
+<div class="wrap">
+<div class="bar"><span class="cell first">OCTALAB</span><span class="cell">ot explorations</span><span class="cell">2026</span><span class="cell end">MKI · OS 1.40C</span><button id="theme" class="cell" type="button">dark</button></div>
+<header class="top">
+  <h1 aria-label="octalab"><svg class="mark" viewBox="0 0 41 8" aria-hidden="true" shape-rendering="crispEdges" fill="currentColor"><rect x="13" y="0" width="1" height="1"/><rect x="25" y="0" width="2" height="1"/><rect x="36" y="0" width="1" height="1"/><rect x="13" y="1" width="1" height="1"/><rect x="26" y="1" width="1" height="1"/><rect x="36" y="1" width="1" height="1"/><rect x="1" y="2" width="3" height="1"/><rect x="7" y="2" width="3" height="1"/><rect x="12" y="2" width="4" height="1"/><rect x="19" y="2" width="3" height="1"/><rect x="26" y="2" width="1" height="1"/><rect x="31" y="2" width="3" height="1"/><rect x="36" y="2" width="4" height="1"/><rect x="0" y="3" width="1" height="1"/><rect x="4" y="3" width="1" height="1"/><rect x="6" y="3" width="1" height="1"/><rect x="10" y="3" width="1" height="1"/><rect x="13" y="3" width="1" height="1"/><rect x="22" y="3" width="1" height="1"/><rect x="26" y="3" width="1" height="1"/><rect x="34" y="3" width="1" height="1"/><rect x="36" y="3" width="1" height="1"/><rect x="40" y="3" width="1" height="1"/><rect x="0" y="4" width="1" height="1"/><rect x="4" y="4" width="1" height="1"/><rect x="6" y="4" width="1" height="1"/><rect x="13" y="4" width="1" height="1"/><rect x="19" y="4" width="4" height="1"/><rect x="26" y="4" width="1" height="1"/><rect x="31" y="4" width="4" height="1"/><rect x="36" y="4" width="1" height="1"/><rect x="40" y="4" width="1" height="1"/><rect x="0" y="5" width="1" height="1"/><rect x="4" y="5" width="1" height="1"/><rect x="6" y="5" width="1" height="1"/><rect x="13" y="5" width="1" height="1"/><rect x="18" y="5" width="1" height="1"/><rect x="22" y="5" width="1" height="1"/><rect x="26" y="5" width="1" height="1"/><rect x="30" y="5" width="1" height="1"/><rect x="34" y="5" width="1" height="1"/><rect x="36" y="5" width="1" height="1"/><rect x="40" y="5" width="1" height="1"/><rect x="0" y="6" width="1" height="1"/><rect x="4" y="6" width="1" height="1"/><rect x="6" y="6" width="1" height="1"/><rect x="10" y="6" width="1" height="1"/><rect x="13" y="6" width="1" height="1"/><rect x="16" y="6" width="1" height="1"/><rect x="18" y="6" width="1" height="1"/><rect x="22" y="6" width="1" height="1"/><rect x="26" y="6" width="1" height="1"/><rect x="30" y="6" width="1" height="1"/><rect x="34" y="6" width="1" height="1"/><rect x="36" y="6" width="1" height="1"/><rect x="40" y="6" width="1" height="1"/><rect x="1" y="7" width="3" height="1"/><rect x="7" y="7" width="3" height="1"/><rect x="14" y="7" width="2" height="1"/><rect x="19" y="7" width="4" height="1"/><rect x="25" y="7" width="3" height="1"/><rect x="31" y="7" width="4" height="1"/><rect x="36" y="7" width="4" height="1"/></svg></h1>
+  <p class="tag">ot explorations · 2026</p>
+  <div class="steps" aria-hidden="true"><i class="f on"></i><i class=""></i><i class=""></i><i class=""></i><i class="f"></i><i class=""></i><i class=""></i><i class=""></i><i class="f"></i><i class=""></i><i class=""></i><i class=""></i><i class="f"></i><i class=""></i><i class=""></i><i class=""></i></div>
+</header>
+<div class="hero"><div class="txt"><p>For four weeks, octalab has explored what can be added to the Octatrack's native firmware, building on <a href="https://github.com/sambanks/octabam">octabam</a> and other projects that paved the way for its reverse engineering and custom firmware (<a href="https://github.com/mxldyn/octamax">octamax</a>, <a href="https://github.com/emuyia/ems-octakit">ems-octakit</a>, <a href="https://github.com/bryantysinger/octa-bt-pt">octa-bt-pt</a>).</p>
+<p>Initial additions included <b>Groove</b>, <b>Generators</b> (Euclidean sequencer, Grids), and a suite of randomization tools. The project is driven by a philosophy of collage and unpredictability to assist the creative process. The goal is to provide a starting point you wouldn't have naturally chosen, all in one gesture.</p>
+<p>The project then focused on improving and streamlining the sampling workflow on the Octatrack. This first led to <b>Capture</b>, an instant sampler inspired by Koala Sampler, followed by <b>Tape</b>, a meta-recorder inspired by Norns.</p>
+<p>Throughout development, a core principle was to avoid overcomplicating an instrument already known for its steep learning curve. The newly implemented shortcuts and pages integrate seamlessly into the Octatrack's legacy OS. Drawing inspiration from devices with state-of-the-art UX, such as Orthogonal Devices' ER-301, these additions naturally paved the way for a full-fledged interface project. This led to <b>ot1</b>: an independent custom firmware built upon octalab's technical and UX discoveries, centered around a brand-new scripting language developed specifically for the OT.</p></div><div class="pics"><figure class="shots"><img src="docs/img/octalab_menu_photo.jpg" alt="The octalab function menu on an Octatrack MKI" loading="lazy"></figure></div></div>
+<nav class="jump" aria-label="Sections"><a href="#where-octalab-stands">Where octalab stands</a><a href="#what-octalab-has-studied">What octalab has studied</a><a href="#additional-notes">Additional notes</a><a href="#for-other-firmware-projects">For other firmware projects</a></nav>
+<main><section id="where-octalab-stands"><h2><span class="hb">Where octalab stands</span></h2><div class="lead"><ol class="timeline"><li class=""><span class="led" aria-hidden="true"></span><span class="when">early September 2026</span><span class="what"><b>Randomisation</b>: one-gesture functions that fill the sample pool, randomise LFOs, effects, scenes and locks</span></li><li class=""><span class="led" aria-hidden="true"></span><span class="when">September, 2nd week</span><span class="what"><b>GROOVE and the groove pool</b>, <b>Generators (Double trig Euclidean sequencer, MI Grids)</b></span></li><li class=""><span class="led" aria-hidden="true"></span><span class="when">September, 3rd week</span><span class="what"><b>CAPTURE</b>, an instant sampler on the trig keys</span></li><li class=""><span class="led" aria-hidden="true"></span><span class="when">end of September</span><span class="what"><b>Direct to CF</b> and <b>TAPE</b>: recording straight to the card while the machine plays, a meta-recorder that keeps everything you play, and independent playback beside the eight tracks</span></li><li class="now"><span class="led" aria-hidden="true"></span><span class="when">October</span><span class="what"><b>OType</b> scripting language for OT and <b>ot1</b> cfw</span></li></ol></div><article class="feature" id="a-quick-note-on-ot1-and-otype"><div class="txt"><h3>A quick note on OT1 and OType</h3><p>The workflow and screen changes octalab explored are too many to fit as one more module in a remix. They are heading into <b><a href="https://github.com/nordseele/ot1">ot1</a></b>, an independent custom firmware: fixed rather than remixed, and built around <b><a href="https://nordseele.github.io/otype-docs/">OType</a></b>, a small scripting language in the spirit of monome Teletype, so that users can add their own functions and shape ot1 to the way they work. A very personal project for now, released once OType is mature.</p>
+<p>Octalab itself stays an <i>atelier</i>, a workshop. Some features will be made available as modules compatible with Octabam. What can travel as an octabam module will, and octabam modules will run on ot1.</p></div></article></section>
+<section id="what-octalab-has-studied"><h2><span class="hb">What octalab has studied</span></h2><div class="lead"><p>Each section says what runs on the unit and what is still in test builds. <b>No firmware, build or source code is published.</b></p></div><article class="feature" id="direct-to-cf-recording-to-the-card-and-playing-it-back"><div class="txt"><h3>Direct to CF: recording to the card, and playing it back</h3><p><b>The largest piece of research so far.</b> The stock Octatrack records only into its sample memory: a take is as long as the RAM allows and lives there until you save it. octalab writes audio <b>straight to the CF card while the machine plays</b>, and plays it back <b>on top of the eight tracks</b>.</p>
+<ul><li><b>Recording, on the MKI</b>: TAPE writes the master to a WAV file in the project folder during a session; CAPTURE saves its pads and chains to the card.</li><li><b>Playback, in test builds</b>: TAPE recordings play back from the card with cue points on the MKI; loading is still slow and some starts are refused while the card is busy.</li><li><b>A ninth voice, in the emulator</b>: a playback path mixed into MAIN without borrowing one of the eight tracks runs in the emulator, sample for sample against the stock output; it is next on the unit.</li><li><b>The hard part</b> is sharing the card and the audio engine: writing while the tracks stream from the card, without a freeze or a dropout. Every build is first played in an emulator against the stock machine, then on the MKI.</li></ul></div></article><article class="feature has-photos" id="capture"><div class="txt"><h3>CAPTURE</h3><svg class="wave" viewBox="0 0 84 11" aria-hidden="true" shape-rendering="crispEdges"><rect class="mid" x="0" y="5" width="84" height="1"/><g fill="currentColor"><rect x="0" y="1" width="1" height="9"/><rect x="1" y="2" width="1" height="7"/><rect x="2" y="4" width="1" height="3"/><rect x="3" y="4" width="1" height="3"/><rect x="4" y="2" width="1" height="7"/><rect x="5" y="2" width="1" height="7"/><rect x="6" y="3" width="1" height="5"/><rect x="7" y="3" width="1" height="5"/><rect x="8" y="1" width="1" height="9"/><rect x="9" y="2" width="1" height="7"/><rect x="10" y="3" width="1" height="5"/><rect x="11" y="4" width="1" height="3"/><rect x="12" y="2" width="1" height="7"/><rect x="13" y="2" width="1" height="7"/><rect x="14" y="4" width="1" height="3"/><rect x="15" y="4" width="1" height="3"/><rect x="16" y="1" width="1" height="9"/><rect x="17" y="2" width="1" height="7"/><rect x="18" y="4" width="1" height="3"/><rect x="19" y="3" width="1" height="5"/><rect x="20" y="1" width="1" height="9"/><rect x="21" y="3" width="1" height="5"/><rect x="22" y="4" width="1" height="3"/><rect x="23" y="3" width="1" height="5"/><rect x="24" y="0" width="1" height="11"/><rect x="25" y="2" width="1" height="7"/><rect x="26" y="3" width="1" height="5"/><rect x="27" y="4" width="1" height="3"/><rect x="28" y="2" width="1" height="7"/><rect x="29" y="3" width="1" height="5"/><rect x="30" y="3" width="1" height="5"/><rect x="31" y="3" width="1" height="5"/><rect x="32" y="1" width="1" height="9"/><rect x="33" y="2" width="1" height="7"/><rect x="34" y="3" width="1" height="5"/><rect x="35" y="3" width="1" height="5"/><rect x="36" y="2" width="1" height="7"/><rect x="37" y="2" width="1" height="7"/><rect x="38" y="3" width="1" height="5"/><rect x="39" y="4" width="1" height="3"/><rect x="40" y="0" width="1" height="11"/><rect x="41" y="3" width="1" height="5"/><rect x="42" y="3" width="1" height="5"/><rect x="43" y="4" width="1" height="3"/><rect x="44" y="1" width="1" height="9"/><rect x="45" y="2" width="1" height="7"/><rect x="46" y="3" width="1" height="5"/><rect x="47" y="4" width="1" height="3"/><rect x="48" y="1" width="1" height="9"/><rect x="49" y="3" width="1" height="5"/><rect x="50" y="4" width="1" height="3"/><rect x="51" y="4" width="1" height="3"/><rect x="52" y="1" width="1" height="9"/><rect x="53" y="2" width="1" height="7"/><rect x="54" y="4" width="1" height="3"/><rect x="55" y="4" width="1" height="3"/><rect x="56" y="1" width="1" height="9"/><rect x="57" y="2" width="1" height="7"/><rect x="58" y="3" width="1" height="5"/><rect x="59" y="4" width="1" height="3"/><rect x="60" y="1" width="1" height="9"/><rect x="61" y="2" width="1" height="7"/><rect x="62" y="4" width="1" height="3"/><rect x="63" y="3" width="1" height="5"/><rect x="64" y="1" width="1" height="9"/><rect x="65" y="2" width="1" height="7"/><rect x="66" y="4" width="1" height="3"/><rect x="67" y="4" width="1" height="3"/><rect x="68" y="2" width="1" height="7"/><rect x="69" y="3" width="1" height="5"/><rect x="70" y="3" width="1" height="5"/><rect x="71" y="3" width="1" height="5"/><rect x="72" y="0" width="1" height="11"/><rect x="73" y="3" width="1" height="5"/><rect x="74" y="3" width="1" height="5"/><rect x="75" y="4" width="1" height="3"/><rect x="76" y="2" width="1" height="7"/><rect x="77" y="2" width="1" height="7"/><rect x="78" y="3" width="1" height="5"/><rect x="79" y="4" width="1" height="3"/><rect x="80" y="0" width="1" height="11"/><rect x="81" y="2" width="1" height="7"/><rect x="82" y="4" width="1" height="3"/><rect x="83" y="3" width="1" height="5"/></g></svg><p><b>A sampling notepad.</b> The idea here is to bring workflows inspired by MPC, Koala Sampler, OP-1 to Octatrack. Record sounds onto the trig keys, play them at once, and turn the good ones into a kit or a sliced chain without leaving the pattern. CAPTURE borrows the selected track's recorder and records from the external inputs or from a track, from almost any screen.</p>
+<p>Three ways to fill the pads:</p>
+<ul><li><b>HOLD</b>: arm, then press an empty trig key to record and release it to stop. The pad plays back immediately, Koala-style.</li><li><b>CHOP</b>: one continuous recording from a playing source. Each press on the next empty pad cuts there: the piece just recorded becomes a pad and recording carries on into the next one.</li><li><b>DICT</b>: set a threshold and arm a pad. Recording starts when a sound crosses the threshold and stops once it falls quiet again, which suits single hits.</li></ul>
+<p>Then trim and shape the pads and <b>SAVE</b>: individual WAVs, plus one sample chain whose slices are in its <code>.ot</code> file. <b>MAP</b> loads that chain into the STATIC or FLEX slot of each selected track in one step, so the tracks keep their machine and settings and get the new material.</p>
+<p><b>State:</b> recording, pad playback and editing, saving, slot assignment, REC arm and the overwrite confirmation run on the MKI. Performance under heavy load (resampling a busy project while writing to the card) is still being worked on.</p></div><div class="pics"><figure class="shots many"><img src="docs/img/capture_photo_main.jpg" alt="CAPTURE&#x27;s MAIN page on an Octatrack MKI: a recorded pad&#x27;s waveform" loading="lazy"><img src="docs/img/capture_photo_chop.jpg" alt="CAPTURE recording in CHOP mode: SLICE ADDED after a cut" loading="lazy"><img src="docs/img/capture_photo_hold.jpg" alt="CAPTURE in HOLD mode waiting for the threshold" loading="lazy"><figcaption>CAPTURE on the unit: a pad's waveform, CHOP recording, HOLD waiting for the threshold.</figcaption></figure></div></article><article class="feature has-photos" id="tape"><div class="txt"><h3>TAPE</h3><p><b>A meta-recorder, like a cassette running in the background.</b> TAPE records what the Octatrack plays (MAIN, or another stereo pair) to a WAV file in the project folder, so a good moment is never lost to not having pressed REC. The target is <b>four channels at once</b>: a stereo pair on tape while CAPTURE records another pair, with no freeze and no dropout.</p>
+<p><b>State:</b> diagnostic test builds have recorded MAIN to the card on the MKI. Reliable long recording while CAPTURE writes too is not reached yet. The TAPE view (record, open a tape, play it back) runs in test builds on the MKI.</p></div><div class="pics"><figure class="shots"><img src="docs/img/tape_photo.jpg" alt="TAPE playing a recording back from the card on an Octatrack MKI" loading="lazy"></figure></div></article><article class="feature has-photos" id="groove-and-the-groove-pool"><div class="txt"><h3>GROOVE and the groove pool</h3><p><b>After Ableton Live's groove pool.</b> A groove is the timing and dynamics of a real performance, laid onto the trigs you already placed, so that a straight pattern takes a drummer's feel.</p>
+<p><b>On the pattern</b>, it only uses the stock sequencer:</p>
+<ul><li>the timing becomes <b>micro timing</b>, up to almost a step early or late;</li><li>the dynamics become <b>volume p-locks</b>, and a volume lock you set by hand is scaled, not replaced;</li><li>a groove always starts from the trigs as they were, so it can be dialled down or removed later (SLOT back to OFF). New trigs, placed or recorded live, take the groove by themselves.</li></ul>
+<p><b>On the page:</b> <b>SLOT</b> (OFF, or one of the bank's eight), then the track's <b>share</b> of the slot's TIMING and VELOCITY, so that the hats can take half of what the snare takes from the same groove. <b>BAR</b> chooses which bar of a longer groove the pattern starts on. You hear every change as you turn.</p>
+<h4>The groove pool</h4>
+<p>Each bank has <b>eight groove slots</b>, like the sample slots. It opens from the bank prompt, with one gesture.</p>
+<ul><li><b>Change a slot and every track on it follows</b>, in every pattern of the bank: one groove change moves the whole kit.</li><li>A slot's settings follow Live's: <b>TIMING</b>, <b>VELOCITY</b> and <b>QUANTIZE</b> (how much of your played timing is removed first). <b>GLOBAL AMOUNT</b> on encoder A pushes or calms every grooved track of the bank, up to 200 %.</li><li><b>Grooves are files.</b> A <code>GROOVES</code> folder at the root of the card holds them as <code>.otg</code> files, a few hundred bytes each. A small converter turns Ableton Live <code>.agr</code> grooves into <code>.otg</code>, including the ones you extract from your own loops. It keeps up to four bars and recognises straight, swung and triplet feels. <b>No groove data ships with octalab.</b></li><li>Pools and settings are kept with the project in a small file of octalab's own. The Octatrack's project files are not touched, and a project stays readable by a stock OS.</li></ul>
+<p><b>Next:</b> pool presets, every pattern scale (only 1X for now), MIDI files as a groove source.</p></div><div class="pics"><figure class="shots"><img src="docs/img/groove_photo.jpg" alt="A track&#x27;s GROOVE page on an Octatrack MKI" loading="lazy"></figure>
+<figure class="shots"><img src="docs/img/groove_pool_photo.jpg" alt="The groove pool of a bank on an Octatrack MKI" loading="lazy"><figcaption>Bank A's pool on the unit: five grooves loaded, the bank's feel pushed to 135 %.</figcaption></figure></div></article><article class="feature has-photos" id="new-workflows-and-new-shortcuts"><div class="txt"><h3>New workflows and new shortcuts</h3><p>The Octatrack is famously full: a machine that takes time to learn and asks you to know its manual by heart. octalab studied how shortcuts and a clearer UX can make it more pleasant to use without breaking it: gestures that stay natural for long-time users, placed where the stock machine had none, and nothing that changes what an existing key already does.</p>
+<ul><li><b>A function menu</b>: one gesture opens a popup of one-gesture functions, grouped by subject: <b>POOL</b> (fill the free sample slots from the card, shuffle, clear), <b>LFO</b> and <b>FX</b> (random), <b>SCENES</b> (generate, clear), <b>TRIGS</b> (random parameter and sample locks, clear them), <b>TRACK</b> (init). Anything that erases asks YES/NO first.</li><li><b>From a trig to its sound</b>: in grid recording, a held trig opens the audio editor on its sample lock, or on the sample the track plays.</li><li><b>Every new page one gesture away</b>: CAPTURE, the groove pool and the grid pages open from wherever you are, and close without a question.</li></ul></div><div class="pics"><figure class="shots"><img src="docs/img/octalab_menu.png" alt="The function menu, screen capture" loading="lazy"></figure></div></article><article class="feature has-photos" id="generators"><div class="txt"><h3>Generators</h3><p>A euclidean <b>generator</b> page, an exploration of Mutable Instruments' <b>Grids</b>, non-destructive pattern <b>modifiers</b>, and a set of <b>views</b> around the main screen. All these generators will now use Otype.</p></div><div class="pics"><figure class="shots"><img src="docs/img/generator_photo.jpg" alt="The euclidean generator page on an Octatrack MKI" loading="lazy"></figure></div></article></section>
+<section id="additional-notes"><h2><span class="hb">Additional notes</span></h2><div class="lead"><ul><li><b>Machines:</b> built and tested on an Octatrack MKI running OS 1.40C. The MKII runs the same OS image but is untested.</li><li><b>Shared with octabam.</b> octalab runs as a module of octabam's remixer and has run on a MKI through octabam's loader daily since 11 Sep 2026. Its findings are written for octabam and the other community projects.</li><li><b>No build is distributed</b>, now or later: an image contains Elektron's OS.</li></ul></div></section>
+<section id="for-other-firmware-projects"><h2><span class="hb">For other firmware projects</span></h2><div class="lead"><ul><li><b>Findings</b>: addresses, data layouts and the traps that cost a failed build, each with its confidence level and source image, are in <b><a href="https://github.com/nordseele/octalab/blob/main/docs/FINDINGS.md"><code>docs/FINDINGS.md</code></a></b>. A <a href="https://github.com/nordseele/octalab/blob/main/docs/FIRMWARE_COVERAGE_RESPONSE.md">coverage response</a> points to the ones that answer gaps raised in another firmware review.</li><li><b>Shared project settings</b>: the <a href="https://github.com/nordseele/octalab/blob/main/docs/OTX_PROJECT_PROPOSAL.md">OTX proposal</a> and its <a href="https://github.com/nordseele/octalab/blob/main/docs/OTX_MODULE_GUIDELINES.md">module guidelines</a> describe one per-project settings store shared by alternative firmwares. Unknown records survive a save unchanged. Not implemented yet.</li></ul></div></section></main>
+<footer><p>© 2026 nordseele. This repository's text and images are licensed under <a href="https://github.com/nordseele/octalab/blob/main/LICENSE">CC BY-NC-SA 4.0</a>: credit octalab, non-commercial use, share adaptations alike. Versions published before 27 September 2026 were MIT.</p>
+<p><i>Independent, unofficial, educational. Not endorsed by, supported by, or affiliated with Elektron. "Elektron" and "Octatrack" are trademarks of Elektron Music Machines MAV AB, used here only to identify the hardware under study. "Ableton" and "Live" are trademarks of Ableton AG. "Grids" is a module by Mutable Instruments.</i></p></footer>
+</div>
+<script>
+(function () {
+  var root = document.documentElement, btn = document.getElementById('theme');
+  var mq = window.matchMedia('(prefers-color-scheme: dark)');
+  function current() { return root.getAttribute('data-theme') || (mq.matches ? 'dark' : 'light'); }
+  function label() { var t = current(); btn.textContent = t === 'dark' ? 'light' : 'dark';
+    btn.setAttribute('aria-label', t === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'); }
+  var saved = null; try { saved = localStorage.getItem('octalab-theme'); } catch (e) {}
+  if (saved === 'dark' || saved === 'light') root.setAttribute('data-theme', saved);
+  label();
+  if (mq.addEventListener) mq.addEventListener('change', label);
+  btn.addEventListener('click', function () {
+    var t = current() === 'dark' ? 'light' : 'dark'; root.setAttribute('data-theme', t); label();
+    try { localStorage.setItem('octalab-theme', t); } catch (e) {}
+  });
+  var cols = Array.prototype.slice.call(document.querySelectorAll('.wave g rect'));
+  var R = 5, x = 7, i = 0, amps = [];
+  function next() {                      /* same generator as wave_amps above */
+    x = (Math.imul(x, 1103515245) + 12345) & 0x7fffffff;
+    var k = i % 8, hit = k === 0 ? R : (k === 4 && (x >> 8) & 1 ? R - 1 : 0);
+    var env = Math.max(hit, Math.round(R * Math.pow(0.8, i % 4)) - 1);
+    i++; return Math.max(0, Math.min(R, env - (x >> 12) % 2));
+  }
+  for (var c = 0; c < cols.length; c++) amps.push(next());
+  if (cols.length && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    setInterval(function () {
+      amps.shift(); amps.push(next());
+      cols.forEach(function (r, c) { r.setAttribute('y', R - amps[c]); r.setAttribute('height', 2 * amps[c] + 1); });
+    }, 110);
+  }
+  var steps = Array.prototype.slice.call(document.querySelectorAll('.steps i')), at = 0;
+  var tempo = parseFloat(getComputedStyle(root).getPropertyValue('--tempo')) * 1000 || 500;
+  if (steps.length && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    setInterval(function () { steps[at].classList.remove('on'); at = (at + 1) % steps.length; steps[at].classList.add('on'); }, tempo);
+  }
+})();
+</script>
+</body>
+</html>
