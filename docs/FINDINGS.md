@@ -161,6 +161,19 @@ and encoder A, and the tables return to stock when it comes off.
 
 → [`INPUT.md`](INPUT.md)
 
+## Trig modes: the popup's tables and callbacks ✅ / 🟡
+
+The active trig mode is a mode id at `0x460d16f0`. Audio tracks offer
+`0 1 2 3 4 5` (`0x400a74a8`), MIDI tracks `0 1 4` (`0x400a74c0`: TRACKS,
+CHROMATIC, QUICK MUTE). The id indexes the label (`0x400beb72`) and icon
+(`0x400beb8a`) tables. Popup: opener `0x400586cc`, redraw `0x400359ac`,
+closer `0x40055e70`, handle `0x400bebae`. `[FUNCTION]+[UP]/[DOWN]` reaches
+`0x40051fc4` through the stock FUNCTION sub-map. 🟡 Writing an id the stock
+does not know is not shown to be safe (many readers, including the trig LED
+view).
+
+→ [`TRIG_MODES.md`](TRIG_MODES.md)
+
 ## A part lives three times, and a reboot reloads the SRAM copy ✅
 
 A part (`0x18b2` bytes) is held as the bank's working part
